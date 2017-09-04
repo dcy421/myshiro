@@ -21,7 +21,7 @@ import java.util.Map;
  * Created by Administrator on 2017/8/31.
  */
 @Controller
-@RequestMapping("/menu")
+@RequestMapping("${adminPath}/menu")
 public class MenuController {
     private Logger logger = Logger.getLogger(MenuController.class);
 
