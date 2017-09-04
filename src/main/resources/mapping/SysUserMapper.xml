@@ -52,6 +52,15 @@
     delete from sys_user
     where id = #{id,jdbcType=INTEGER}
   </delete>
+
+  <delete id="deleteByIds" parameterType="java.lang.Integer" >
+    delete from sys_user
+    where ID IN
+    <foreach collection="ids" item="item"  open="(" separator="," close=")">
+      #{item}
+    </foreach>
+  </delete>
+
   <insert id="insert" parameterType="com.dcy.model.SysUser" >
     insert into sys_user (id, departmentID, username,
     password, salt, locked,
@@ -275,5 +284,30 @@
     LIMIT #{BST.offset},#{BST.limit}
   </select>
 
+  <select id="getRoleNameByUserName" resultType="java.lang.String">
+    SELECT r.name FROM sys_user u INNER JOIN sys_user_role sur on u.id = sur.userID INNER JOIN sys_role r on sur.roleID = r.id
+    WHERE u.username = #{username,jdbcType=VARCHAR}
+  </select>
+
+  <select id="getPermissionsByUserName" resultType="java.lang.String">
+    SELECT m.permission FROM sys_user u INNER JOIN sys_user_role sur on u.id = sur.userID INNER JOIN sys_role r on sur.roleID = r.id
+    INNER JOIN sys_role_menu srm on r.id = srm.roleID INNER JOIN sys_menu m on srm.menuID = m.id
+    WHERE u.username = #{username,jdbcType=VARCHAR} AND available = 0 and permission != ''
+  </select>
+
+  <delete id="deleteUserRoleByUserId" parameterType="java.lang.Integer" >
+    delete from sys_user_role
+    where UserId = #{userId,jdbcType=INTEGER}
+  </delete>
+
+
+  <insert id="insertUserRoleBatch" parameterType="java.util.List" >
+    insert into sys_user_role (UserId, RoleId
+    )
+    values
+    <foreach collection="list" item="item" index="index" separator="," >
+      (#{item.userId},#{item.roleId})
+    </foreach>
+  </insert>
 
 </mapper>

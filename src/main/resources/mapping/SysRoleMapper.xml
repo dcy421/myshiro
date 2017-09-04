@@ -12,6 +12,19 @@
   <sql id="Base_Column_List" >
     id, departmentID, name, enname, available, remarks
   </sql>
+
+  <sql id="Where_Sql" >
+    <if test="role.name != null and role.name != ''" >
+      AND r.Name like concat('%', #{role.name,jdbcType=VARCHAR}, '%')
+    </if>
+  </sql>
+
+  <sql id="OrderBy_Sql" >
+    <if test="BST.sort != null and BST.sort != ''" >
+      order by  ${BST.sort} ${BST.order}
+    </if>
+  </sql>
+
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
     <include refid="Base_Column_List" />
@@ -30,7 +43,9 @@
       #{enname,jdbcType=VARCHAR}, #{available,jdbcType=BIT}, #{remarks,jdbcType=VARCHAR}
       )
   </insert>
-  <insert id="insertSelective" parameterType="com.dcy.model.SysRole" >
+
+  <!--返回自增列   调用  user.id-->
+  <insert id="insertSelective" parameterType="com.dcy.model.SysRole" useGeneratedKeys="true" keyProperty="id">
     insert into sys_role
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -103,4 +118,54 @@
       remarks = #{remarks,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
+
+
+  <select id="getRoleCount" resultType="java.lang.Integer">
+    SELECT COUNT(r.ID) as count  from sys_role r WHERE 1=1
+    <include refid="Where_Sql"/>
+  </select>
+
+  <select id="getRolePageList" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from sys_role r  WHERE 1=1
+    <include refid="Where_Sql"/>
+    <include refid="OrderBy_Sql"/>
+    LIMIT #{BST.offset},#{BST.limit}
+  </select>
+
+  <select id="getRoleNameIsRepeat" resultType="java.lang.Integer">
+    SELECT COUNT(ID)
+    from sys_role  WHERE Name = #{name,jdbcType=VARCHAR}
+  </select>
+
+  <insert id="insertRoleMenuBatch" parameterType="java.util.List" >
+    insert into sys_role_menu (RoleId, MenuId
+    )
+    values
+    <foreach collection="list" item="item" index="index" separator="," >
+      (#{item.roleId},#{item.menuId})
+    </foreach>
+  </insert>
+
+  <delete id="deleteRoleMenu" parameterType="java.lang.Integer" >
+    delete from sys_role_menu
+    where RoleId = #{roleid,jdbcType=INTEGER}
+  </delete>
+
+  <delete id="deleteByids" parameterType="java.lang.Integer" >
+    delete from sys_role
+    where ID IN
+    <foreach collection="ids" item="item"  open="(" separator="," close=")">
+      #{item}
+    </foreach>
+  </delete>
+
+  <select id="selectRoleMenu" resultType="java.lang.String" parameterType="java.lang.Integer" >
+    select MenuId
+    from sys_role_menu
+    where RoleId = #{roleId,jdbcType=INTEGER}
+  </select>
+
+
 </mapper>

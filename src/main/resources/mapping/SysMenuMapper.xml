@@ -14,6 +14,30 @@
     <result column="permission" property="permission" jdbcType="VARCHAR" />
     <result column="remarks" property="remarks" jdbcType="VARCHAR" />
   </resultMap>
+
+  <resultMap id="BaseResultMap2" type="com.heitian.ssm.model.VuserRoleMenu" >
+    <result column="userID" property="userid" jdbcType="INTEGER" />
+    <result column="UserName" property="username" jdbcType="VARCHAR" />
+    <result column="PassWord" property="password" jdbcType="VARCHAR" />
+    <result column="Email" property="email" jdbcType="VARCHAR" />
+    <result column="Phone" property="phone" jdbcType="VARCHAR" />
+    <result column="Photo" property="photo" jdbcType="VARCHAR" />
+    <result column="LoginFlag" property="loginFlag" jdbcType="INTEGER" />
+    <result column="roleID" property="roleid" jdbcType="INTEGER" />
+    <result column="roleName" property="rolename" jdbcType="VARCHAR" />
+    <result column="Role_flag" property="roleFlag" jdbcType="INTEGER" />
+    <result column="menuID" property="menuid" jdbcType="INTEGER" />
+    <result column="parentId" property="parentId" jdbcType="INTEGER" />
+    <result column="parentIds" property="parentIds" jdbcType="VARCHAR" />
+    <result column="menuName" property="menuname" jdbcType="VARCHAR" />
+    <result column="sort" property="sort" jdbcType="INTEGER" />
+    <result column="href" property="href" jdbcType="VARCHAR" />
+    <result column="icon" property="icon" jdbcType="VARCHAR" />
+    <result column="isShow" property="isShow" jdbcType="INTEGER" />
+    <result column="permission" property="permission" jdbcType="VARCHAR" />
+    <result column="target" property="target" jdbcType="VARCHAR" />
+  </resultMap>
+
   <sql id="Base_Column_List" >
     id, parentID, parentIDs, name, sort, href, target, icon, available, permission, remarks
   </sql>
@@ -160,4 +184,19 @@
       remarks = #{remarks,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
+
+  <select id="selectAll" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    from sys_menu WHERE available = 0
+  </select>
+
+  <select id="getMenuListByUserName" resultMap="BaseResultMap2" parameterType="java.lang.String" >
+    SELECT m.id as menuID, m.parentID as ParentId, m.parentIDs as parentIds, m.name as menuname, m.sort as sort, m.href as href, m.target as target, m.icon as icon, m.available, m.permission, m.remarks
+    FROM sys_user u INNER JOIN sys_user_role sur on u.id = sur.userID INNER JOIN sys_role r on sur.roleID = r.id
+    INNER JOIN sys_role_menu srm on r.id = srm.roleID INNER JOIN sys_menu m on srm.menuID = m.id
+    WHERE m.available = 0 AND u.UserName = #{username,jdbcType=VARCHAR} AND permission = '' ORDER BY Sort
+  </select>
+
+
 </mapper>

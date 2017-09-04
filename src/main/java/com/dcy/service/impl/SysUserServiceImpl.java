@@ -3,6 +3,7 @@ package com.dcy.service.impl;
 import javax.annotation.Resource;
 
 import com.dcy.model.BootStrapTable;
+import com.dcy.model.SysUserRole;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,6 +13,7 @@ import com.dcy.service.PasswordHelper;
 import com.dcy.service.SysUserService;
 
 import java.util.List;
+import java.util.Set;
 
 @Service
 @Transactional(rollbackFor = Exception.class)
@@ -28,28 +30,25 @@ public class SysUserServiceImpl implements SysUserService {
 	}
 
 	public SysUser selectByUserNamePassWord(String username, String password) {
-		// TODO Auto-generated method stub
 		return sysUserMapper.selectByUserNamePassWord(username, password);
 	}
 
 	public int insertSelective(SysUser sysUser) {
-		// TODO Auto-generated method stub
+		//赋值加密之后新的密码
 		passwordHelper.encryptPassword(sysUser);
 		return sysUserMapper.insertSelective(sysUser);
 	}
 
 	public SysUser selectByUserName(String username) {
-		// TODO Auto-generated method stub
 		return sysUserMapper.selectByUserName(username);
 	}
 
 	public SysUser selectByPrimaryKey(Integer id) {
-		// TODO Auto-generated method stub
 		return sysUserMapper.selectByPrimaryKey(id);
 	}
 
 	public int updateByPrimaryKeySelective(SysUser record) {
-		// TODO Auto-generated method stub
+		//赋值加密之后新的密码
 		passwordHelper.encryptPassword(record);
 		return sysUserMapper.updateByPrimaryKeySelective(record);
 	}
@@ -60,6 +59,30 @@ public class SysUserServiceImpl implements SysUserService {
 
 	public List<SysUser> getUserPageList(BootStrapTable bootStrapTable, SysUser sysUser) {
 		return sysUserMapper.getUserPageList(bootStrapTable, sysUser);
+	}
+
+	public Set<String> getRoleNameByUserName(String username) {
+		return sysUserMapper.getRoleNameByUserName(username);
+	}
+
+	public Set<String> getPermissionsByUserName(String username) {
+		return sysUserMapper.getPermissionsByUserName(username);
+	}
+
+	public int deleteUserRoleByUserId(Integer userId) {
+		return sysUserMapper.deleteUserRoleByUserId(userId);
+	}
+
+	public int insertUserRoleBatch(List<SysUserRole> sysUserRoles) {
+		return sysUserMapper.insertUserRoleBatch(sysUserRoles);
+	}
+
+	public int deleteByPrimaryKey(Integer id) {
+		return sysUserMapper.deleteByPrimaryKey(id);
+	}
+
+	public int deleteByIds(Integer[] ids) {
+		return sysUserMapper.deleteByIds(ids);
 	}
 
 }

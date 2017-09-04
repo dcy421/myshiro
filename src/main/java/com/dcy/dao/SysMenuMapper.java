@@ -1,6 +1,10 @@
 package com.dcy.dao;
 
 import com.dcy.model.SysMenu;
+import com.dcy.model.VuserRoleMenu;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 public interface SysMenuMapper {
     /**
@@ -38,4 +42,17 @@ public interface SysMenuMapper {
      * @mbggenerated
      */
     int updateByPrimaryKey(SysMenu record);
+
+    /**
+     * 查询全部
+     * @return
+     */
+    List<SysMenu> selectAll();
+
+    /**
+     * 根据username 查询菜单
+     * @param username
+     * @return
+     */
+    List<VuserRoleMenu> getMenuListByUserName(@Param(value = "username") String username);
 }

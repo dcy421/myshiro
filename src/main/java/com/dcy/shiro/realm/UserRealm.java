@@ -35,16 +35,14 @@ public class UserRealm extends AuthorizingRealm {
 	 */
 	@Override
 	protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
-		logger.info(" 授权 ");
+		//logger.info(" 授权 ");
 		//获取登录名
-		String userName = (String) principals.getPrimaryPrincipal();
+		String username = (String) principals.getPrimaryPrincipal();
 		SimpleAuthorizationInfo authorizationInfo = new SimpleAuthorizationInfo();
-		Set set = new HashSet();
-		set.add("user");
-		Set set2 = new HashSet();
-		set2.add("user:add");
-		authorizationInfo.setRoles(set);
-		authorizationInfo.setStringPermissions(set2);
+		//获取登陆人有哪些角色
+		authorizationInfo.setRoles(sysUserService.getRoleNameByUserName(username));
+		//获取登陆人有哪些权限
+		authorizationInfo.setStringPermissions(sysUserService.getPermissionsByUserName(username));
 		return authorizationInfo;
 	}
 
