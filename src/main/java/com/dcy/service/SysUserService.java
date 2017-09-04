@@ -1,10 +1,21 @@
 package com.dcy.service;
 
 
+import com.dcy.model.BootStrapTable;
 import com.dcy.model.SysUser;
+
+import java.util.List;
 
 public interface SysUserService {
 
+
+
+    /**
+     * 查询用户名是否 重复
+     * @param userName
+     * @return
+     */
+    int getUserNameIsRepeat(String userName);
 
     /**
      * 登陆验证
@@ -44,5 +55,21 @@ public interface SysUserService {
      * @return
      */
    int updateByPrimaryKeySelective(SysUser record);
+
+
+    /**
+     * 获取一共有多少条数据
+     * @param sysUser
+     * @return
+     */
+    int getUserCount(SysUser sysUser);
+
+    /**
+     * 分页
+     * @param bootStrapTable
+     * @param sysUser
+     * @return
+     */
+    List<SysUser> getUserPageList(BootStrapTable bootStrapTable, SysUser sysUser);
    
 }

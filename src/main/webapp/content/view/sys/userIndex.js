@@ -11,7 +11,7 @@ var $table = $('#empUserList'),
     selections = [];
 $(function() {
     $table.bootstrapTable({
-        url : '/user/getUserPageListBST',
+        url : 'getUserPageList',
         /*detailView:true,
          detailFormatter:detailFormatter,*/
         queryParams : queryParams,
@@ -20,12 +20,6 @@ $(function() {
         uniqueId : "id", // 每一行的唯一标识
         columns : [ {
             checkbox : true
-        },  {
-            title : '部门',
-            field : 'departmentname', // 字段
-            align : 'center', // 对齐方式（左 中 右）
-            valign : 'middle', //
-            sortable : true
         },{
             title : '用户名',
             field : 'username', // 字段
@@ -51,12 +45,6 @@ $(function() {
             valign : 'middle',
             sortable : true
         }, {
-            title : '父母名字',
-            field : 'parentname',
-            align : 'center',
-            valign : 'middle',
-            sortable : true
-        }, {
             title : '地址',
             field : 'address',
             align : 'center',
@@ -64,7 +52,7 @@ $(function() {
             sortable : true
         },  {
             title : '是否启动',
-            field : 'loginFlag',
+            field : 'locked',
             align : 'center',
             valign : 'middle',
             sortable : true,
@@ -103,7 +91,7 @@ $(function() {
         $table.bootstrapTable('refresh');	//从新加载数据
     });
     $add.click(function () {
-        layer_show("用户添加","/user/userAdd","800","600");
+        layer_show("用户添加","add","800","600");
         //addTabs(({ id: '10008111', title: '用户添加', close: false, url: '/user/userAdd' }));
         /*console.log($('.page-tabs-content', parent.document).hide()) ;
          console.log($('.page-tabs-content').hide()) ;*/
@@ -173,9 +161,8 @@ function detailFormatter(index, row) {
 }
 
 function operateFormatter(value, row, index) {
-    //console.log(value);
     var str = "";
-    if(value== 0){
+    if(!value){
         str = "<span class=\"label label-success\">启动</span>";
     }else {
         str = "<span class=\"label label-danger\">关闭</span>";

@@ -16,32 +16,55 @@
     <result column="login_ip" property="loginIp" jdbcType="VARCHAR" />
     <result column="login_date" property="loginDate" jdbcType="TIMESTAMP" />
     <result column="remarks" property="remarks" jdbcType="VARCHAR" />
+    <result column="sex" property="sex" jdbcType="INTEGER" />
+    <result column="birthday" property="birthday" jdbcType="DATE" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, departmentID, username, password, salt, locked, name, email, phone, photo, dataRange, 
-    login_ip, login_date, remarks
+    u.id, u.departmentID, u.username, u.password, u.salt, u.locked, u.name, u.email, u.phone, u.photo, u.dataRange,
+    u.login_ip, u.login_date, u.remarks, u.sex, u.birthday
   </sql>
+
+  <sql id="Where_Sql" >
+    <if test="user.username != null and user.username != ''" >
+      AND u.UserName like concat('%', #{user.username,jdbcType=VARCHAR}, '%')
+    </if>
+    <if test="user.email != null and user.email != ''" >
+      AND u.Email like concat('%', #{user.email,jdbcType=VARCHAR}, '%')
+    </if>
+    <if test="user.photo != null and user.photo != ''" >
+      AND u.Phone like concat('%', #{user.phone,jdbcType=VARCHAR} , '%')
+    </if>
+  </sql>
+
+  <sql id="OrderBy_Sql" >
+    <if test="BST.sort != null and BST.sort != ''" >
+      order by  ${BST.sort} ${BST.order}
+    </if>
+  </sql>
+
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
-    select 
+    select
     <include refid="Base_Column_List" />
-    from sys_user
-    where id = #{id,jdbcType=INTEGER}
+    from sys_user u
+    where u.id = #{id,jdbcType=INTEGER}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from sys_user
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.dcy.model.SysUser" >
-    insert into sys_user (id, departmentID, username, 
-      password, salt, locked, 
-      name, email, phone, 
-      photo, dataRange, login_ip, 
-      login_date, remarks)
-    values (#{id,jdbcType=INTEGER}, #{departmentid,jdbcType=INTEGER}, #{username,jdbcType=VARCHAR}, 
-      #{password,jdbcType=VARCHAR}, #{salt,jdbcType=VARCHAR}, #{locked,jdbcType=BIT}, 
-      #{name,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, 
-      #{photo,jdbcType=VARCHAR}, #{datarange,jdbcType=INTEGER}, #{loginIp,jdbcType=VARCHAR}, 
-      #{loginDate,jdbcType=TIMESTAMP}, #{remarks,jdbcType=VARCHAR})
+    insert into sys_user (id, departmentID, username,
+    password, salt, locked,
+    name, email, phone,
+    photo, dataRange, login_ip,
+    login_date, remarks, sex,
+    birthday)
+    values (#{id,jdbcType=INTEGER}, #{departmentid,jdbcType=INTEGER}, #{username,jdbcType=VARCHAR},
+    #{password,jdbcType=VARCHAR}, #{salt,jdbcType=VARCHAR}, #{locked,jdbcType=BIT},
+    #{name,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR},
+    #{photo,jdbcType=VARCHAR}, #{datarange,jdbcType=INTEGER}, #{loginIp,jdbcType=VARCHAR},
+    #{loginDate,jdbcType=TIMESTAMP}, #{remarks,jdbcType=VARCHAR}, #{sex,jdbcType=INTEGER},
+    #{birthday,jdbcType=DATE})
   </insert>
   <insert id="insertSelective" parameterType="com.dcy.model.SysUser" >
     insert into sys_user
@@ -88,6 +111,12 @@
       <if test="remarks != null" >
         remarks,
       </if>
+      <if test="sex != null" >
+        sex,
+      </if>
+      <if test="birthday != null" >
+        birthday,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -131,6 +160,12 @@
       </if>
       <if test="remarks != null" >
         #{remarks,jdbcType=VARCHAR},
+      </if>
+      <if test="sex != null" >
+        #{sex,jdbcType=INTEGER},
+      </if>
+      <if test="birthday != null" >
+        #{birthday,jdbcType=DATE},
       </if>
     </trim>
   </insert>
@@ -176,6 +211,12 @@
       <if test="remarks != null" >
         remarks = #{remarks,jdbcType=VARCHAR},
       </if>
+      <if test="sex != null" >
+        sex = #{sex,jdbcType=INTEGER},
+      </if>
+      <if test="birthday != null" >
+        birthday = #{birthday,jdbcType=DATE},
+      </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
@@ -193,22 +234,45 @@
       dataRange = #{datarange,jdbcType=INTEGER},
       login_ip = #{loginIp,jdbcType=VARCHAR},
       login_date = #{loginDate,jdbcType=TIMESTAMP},
-      remarks = #{remarks,jdbcType=VARCHAR}
+      remarks = #{remarks,jdbcType=VARCHAR},
+      sex = #{sex,jdbcType=INTEGER},
+      birthday = #{birthday,jdbcType=DATE}
     where id = #{id,jdbcType=INTEGER}
   </update>
+
+  <select id="getUserNameIsRepeat" resultType="java.lang.Integer">
+    select COUNT(ID)
+    from sys_user WHERE userName = #{userName,jdbcType=VARCHAR}
+  </select>
 
   <select id="selectByUserNamePassWord" resultMap="BaseResultMap" >
     select
     <include refid="Base_Column_List" />
-    from sys_user
-    where username = #{username,jdbcType=VARCHAR} and password = #{password,jdbcType=VARCHAR}
+    from sys_user u
+    where u.username = #{username,jdbcType=VARCHAR} and u.password = #{password,jdbcType=VARCHAR}
   </select>
 
   <select id="selectByUserName" resultMap="BaseResultMap" >
     select
     <include refid="Base_Column_List" />
-    from sys_user
-    where username = #{username,jdbcType=VARCHAR}
+    from sys_user u
+    where u.username = #{username,jdbcType=VARCHAR}
+  </select>
+
+  <select id="getUserCount" resultType="java.lang.Integer">
+    SELECT COUNT(u.ID) as count  from sys_user u WHERE 1=1
+    <include refid="Where_Sql"/>
+  </select>
+
+  <select id="getUserPageList" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from sys_user u
+    WHERE 1=1
+    <include refid="Where_Sql"/>
+
+    <include refid="OrderBy_Sql"/>
+    LIMIT #{BST.offset},#{BST.limit}
   </select>
 
 

@@ -545,6 +545,7 @@ desired effect
                 icon: "fa fa-circle-o",
                 children: [
                     { id: "10004", text: "按钮", url: "/components/buttons.html", targetType: "iframe-tab", icon: "fa fa-square" },
+                    { id: "100012", text: "用户列表", url: "${ctx}/user/index?type=", targetType: "iframe-tab", icon: "fa fa-square" },
                     { id: "10003", text: "常用组件", url: "/components/general.html", targetType: "iframe-tab", icon: "fa fa-list-alt" },
 
                     { id: "10012", text: "图标库", url: "/components/icons.html", targetType: "iframe-tab", icon: "fa fa-circle-o" },

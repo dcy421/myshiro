@@ -1,7 +1,10 @@
 package com.dcy.dao;
 
+import com.dcy.model.BootStrapTable;
 import com.dcy.model.SysUser;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 public interface SysUserMapper {
     /**
@@ -41,6 +44,12 @@ public interface SysUserMapper {
     int updateByPrimaryKey(SysUser record);
 
     /**
+     * 查询用户名是否 重复
+     * @param userName
+     * @return
+     */
+    int getUserNameIsRepeat(@Param(value = "userName") String userName);
+    /**
      * 登陆验证
      * @param username
      * @param password
@@ -55,4 +64,20 @@ public interface SysUserMapper {
      * @return
      */
     SysUser selectByUserName(@Param(value = "username") String username);
+
+
+    /**
+     * 获取一共有多少条数据
+     * @param sysUser
+     * @return
+     */
+    int getUserCount(@Param(value = "user") SysUser sysUser);
+
+    /**
+     * 分页
+     * @param bootStrapTable
+     * @param sysUser
+     * @return
+     */
+    List<SysUser> getUserPageList(@Param(value = "BST") BootStrapTable bootStrapTable,@Param(value = "user") SysUser sysUser);
 }

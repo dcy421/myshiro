@@ -14,17 +14,12 @@
         <jdbcConnection driverClass="com.mysql.jdbc.Driver" connectionURL="jdbc:mysql://127.0.0.1:3306/db_shiro"
                         userId="root"
                         password="root" />
-        <javaModelGenerator targetPackage="com.dcy.model" targetProject="E:/Development/java/myshiro/src/main/java/" >
+        <javaModelGenerator targetPackage="com.dcy.model" targetProject="E:/Test/java/" >
         </javaModelGenerator>
-        <sqlMapGenerator targetPackage="mapping" targetProject="E:/Development/java/myshiro/src/main/resources/" >
+        <sqlMapGenerator targetPackage="mapping" targetProject="E:/Test/resources/" >
         </sqlMapGenerator>
-        <javaClientGenerator targetPackage="com.dcy.dao" targetProject="E:/Development/java/myshiro/src/main/java/" type="XMLMAPPER" >
+        <javaClientGenerator targetPackage="com.dcy.dao" targetProject="E:/Test/java/" type="XMLMAPPER" >
         </javaClientGenerator>
-        <table tableName="sys_department"  enableSelectByExample="false" enableDeleteByExample="false"
-               enableCountByExample="false" enableUpdateByExample="false"
-               selectByExampleQueryId="false">
-        </table>
-
         <table tableName="sys_user"  enableSelectByExample="false" enableDeleteByExample="false"
                enableCountByExample="false" enableUpdateByExample="false"
                selectByExampleQueryId="false">

@@ -6,17 +6,17 @@ $(function () {
     });
     $("#form-admin-add").validate({
         rules:{
-            name:{
+            username:{
                 required:true,
                 minlength:5,
                 maxlength:16,
                 remote: {
-                    url: "/teacher/getRepeatTeacherName",     //后台处理程序
+                    url: "getRepeatUserName",     //后台处理程序
                     type: "post",               //数据发送方式
                     dataType: "json",           //接受数据格式
                     data: {
-                        Name: function() {
-                            return $("#name").val();
+                        userName: function() {
+                            return $("#username").val();
                         }
                     },//要传递的数据
                     dataFilter: function(data) { //返回结果
@@ -27,46 +27,44 @@ $(function () {
                     }
                 }
             },
-            name:{
+            password:{
                 required:true,
-                isChinese:true,
+                minlength:5,
+                maxlength:16
             },
-            sex:{
+            confirm_password:{
                 required:true,
-            },
-            birthday:{
-                required:true,
-            },
-            idcard:{
-                required:true,
-                maxlength:18,
-                isIdCardNo:true,
-            },
-            address:{
-                required:true,
-            },
-            workcard:{
-                required:true,
+                minlength:5,
+                maxlength:16,
+                equalTo: "#password"
             },
             phone:{
                 required:true,
-                isTel:true,
+                isPhone:true
+            },
+            email:{
+                required:true,
+                email:true
+            },
+
+            loginFlag:{
+                required:true
             }
         },
         messages:{
-            name:{
-                remote:"教师名已经注册，请重新输入"
+            username:{
+                remote:"用户名已经注册，请重新输入"
             }
         },
         onkeyup : false,
         submitHandler:function(form){
             $.ajax({
-                url : "/teacher/SaveSysTeacher",
+                url : "SaveSysUser",
                 type: "Post",
                 dataType : "json",
                 data:  $("#form-admin-add").serialize()+"&flag=add",
                 success : function(result) {
-                    console.log(result);
+                    //console.log(result);
                     if(result > 0) {
                         opaler();
                     } else {
@@ -100,10 +98,10 @@ $(function(){
             // 选完文件后，是否自动上传。
             auto: true,
             // swf文件路径
-            swf:   '/content/plugins/webuploader/Uploader.swf',
+            swf:   '${pageContext.request.contextPath}/content/plugins/webuploader/Uploader.swf',
             //fileNumLimit: 1,
             // 文件接收服务端。
-            server: '/teacher/uploadPicture',
+            server: 'uploadPicture',
             // 选择文件的按钮。可选。
             // 内部根据当前运行是创建，可能是input元素，也可能是flash.
             pick: '#filePicker',

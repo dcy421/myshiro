@@ -125,4 +125,12 @@
       available = #{available,jdbcType=BIT}
     where id = #{id,jdbcType=INTEGER}
   </update>
+
+  <select id="selectListByType" resultMap="BaseResultMap" >
+    select
+    <include refid="Base_Column_List" />
+    from sys_dict
+    where type = #{type,jdbcType=VARCHAR} AND available = '0'
+  </select>
+
 </mapper>

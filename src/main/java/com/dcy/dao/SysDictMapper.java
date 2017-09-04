@@ -1,6 +1,9 @@
 package com.dcy.dao;
 
 import com.dcy.model.SysDict;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 public interface SysDictMapper {
     /**
@@ -38,4 +41,11 @@ public interface SysDictMapper {
      * @mbggenerated
      */
     int updateByPrimaryKey(SysDict record);
+
+    /**
+     * 根据类型查询字典
+     * @param type
+     * @return
+     */
+    List<SysDict> selectListByType(@Param(value = "type") String type);
 }

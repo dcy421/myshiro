@@ -74,6 +74,17 @@ public class SysUser {
     private String remarks;
 
     /**
+     * 默认1 男  2 女
+     */
+    private Integer sex;
+
+    /**
+     * 生日
+     */
+    private Date birthday;
+
+
+    /**
      * 主键
      * @return id 主键
      */
@@ -295,6 +306,37 @@ public class SysUser {
      */
     public void setRemarks(String remarks) {
         this.remarks = remarks;
+    }
+    /**
+     * 默认1 男  2 女
+     * @return sex 默认1 男  2 女
+     */
+    public Integer getSex() {
+        return sex;
+    }
+
+    /**
+     * 默认1 男  2 女
+     * @param sex 默认1 男  2 女
+     */
+    public void setSex(Integer sex) {
+        this.sex = sex;
+    }
+
+    /**
+     * 生日
+     * @return birthday 生日
+     */
+    public Date getBirthday() {
+        return birthday;
+    }
+
+    /**
+     * 生日
+     * @param birthday 生日
+     */
+    public void setBirthday(Date birthday) {
+        this.birthday = birthday;
     }
 
     public String getCredentialsSalt() {
