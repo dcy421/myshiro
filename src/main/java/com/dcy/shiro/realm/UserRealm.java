@@ -17,6 +17,7 @@ import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.util.ByteSource;
 import org.springframework.stereotype.Repository;
 
+import com.dcy.model.SysUser;
 import com.dcy.service.SysUserService;
 
 import java.util.HashSet;
@@ -59,7 +60,7 @@ public class UserRealm extends AuthorizingRealm {
         /*logger.info(" 登录名"+upToken.getUsername());
         logger.info(" 密码名"+String.valueOf(upToken.getPassword()));*/
         //根据登录名查询对象
-        /*SysUser sysUser = sysUserService.selectByUserName(userName);
+        SysUser sysUser = sysUserService.selectByUserName(userName);
         if (sysUser == null) {
         	throw new UnknownAccountException();//没找到帐号
 		}
@@ -72,8 +73,8 @@ public class UserRealm extends AuthorizingRealm {
         		sysUser.getPassword(), //密码
                 ByteSource.Util.bytes(sysUser.getCredentialsSalt()),//salt=username+salt
                 getName()  //realm name
-        );*/
-        return null;
+        );
+        return authenticationInfo;
 	}
 
 	/**
