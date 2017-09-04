@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE generatorConfiguration PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+<generatorConfiguration>
+    <classPathEntry
+            location="E:/Development/Java/mysql-connector-java-5.1.34.jar" />
+
+    <context id="context1" targetRuntime="MyBatis3">
+        <commentGenerator  type="com.dcy.utils.mybatis.MyCommentGenerator">
+            <property name="javaFileEncoding" value="UTF-8"/>
+            <property name="suppressDate" value="true" />
+            <property name="suppressAllComments" value="false" />
+        </commentGenerator>
+        <jdbcConnection driverClass="com.mysql.jdbc.Driver" connectionURL="jdbc:mysql://127.0.0.1:3306/db_shiro"
+                        userId="root"
+                        password="root" />
+        <javaModelGenerator targetPackage="com.dcy.model" targetProject="E:/Development/java/myshiro/src/main/java/" >
+        </javaModelGenerator>
+        <sqlMapGenerator targetPackage="mapping" targetProject="E:/Development/java/myshiro/src/main/resources/" >
+        </sqlMapGenerator>
+        <javaClientGenerator targetPackage="com.dcy.dao" targetProject="E:/Development/java/myshiro/src/main/java/" type="XMLMAPPER" >
+        </javaClientGenerator>
+        <table tableName="sys_department"  enableSelectByExample="false" enableDeleteByExample="false"
+               enableCountByExample="false" enableUpdateByExample="false"
+               selectByExampleQueryId="false">
+        </table>
+
+        <table tableName="sys_user"  enableSelectByExample="false" enableDeleteByExample="false"
+               enableCountByExample="false" enableUpdateByExample="false"
+               selectByExampleQueryId="false">
+        </table>
+    </context>
+</generatorConfiguration>
