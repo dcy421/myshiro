@@ -30,7 +30,7 @@ public class LoginController extends BaseController {
 	private Logger logger = Logger.getLogger(LoginController.class);
 
     /**
-     * 首页 test
+     * 首页
      * @return
      */
 	@RequestMapping("/index")
