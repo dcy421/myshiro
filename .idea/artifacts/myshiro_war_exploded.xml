@@ -87,6 +87,7 @@
           <element id="library" level="project" name="Maven: javax.activation:activation:1.1.1" />
           <element id="library" level="project" name="Maven: org.apache.ant:ant:1.8.2" />
           <element id="library" level="project" name="Maven: org.apache.ant:ant-launcher:1.8.2" />
+          <element id="library" level="project" name="Maven: joda-time:joda-time:2.9.9" />
         </element>
       </element>
       <element id="directory" name="META-INF">

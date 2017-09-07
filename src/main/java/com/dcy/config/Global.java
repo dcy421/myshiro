@@ -9,11 +9,16 @@ import org.springframework.core.io.DefaultResourceLoader;
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * Created by Administrator on 2017/9/1.
  */
 public class Global {
+
+    public static final String FILEUPDATE = "data";
+    public static final String USER = "user";
+
     /**
      * 当前对象实例
      */
@@ -72,6 +77,15 @@ public class Global {
      */
     public static String getAdminPath() {
         return getConfig("adminPath");
+    }
+
+    /**
+     * 生成唯一标识 guid
+     * @return
+     */
+    public static final String GenerateGUID(){
+        UUID uuid = UUID.randomUUID();
+        return uuid.toString();
     }
 
     /**

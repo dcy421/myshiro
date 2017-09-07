@@ -1,5 +1,6 @@
 package com.dcy.controller;
 
+import com.dcy.config.Global;
 import com.dcy.model.MenuTreeNode;
 import com.dcy.model.SysMenu;
 import com.dcy.model.VuserRoleMenu;
@@ -21,7 +22,7 @@ import java.util.Map;
  * Created by Administrator on 2017/8/31.
  */
 @Controller
-@RequestMapping("${adminPath}/menu")
+@RequestMapping("${adminPath}/sys/menu")
 public class MenuController {
     private Logger logger = Logger.getLogger(MenuController.class);
 
@@ -87,9 +88,10 @@ public class MenuController {
             VuserRoleMenu vuserRoleMenu = vuserRoleMenuList.get(0);
             //取第一条数据
             MenuTreeNode menuTreeNode = new MenuTreeNode(vuserRoleMenu.getMenuid(),vuserRoleMenu.getParentId(),false,vuserRoleMenu.getMenuname(),false,vuserRoleMenu.getIcon(),vuserRoleMenu.getHref(),vuserRoleMenu.getTarget());
+            menuTreeNode.getChildren().add(new MenuTreeNode(10010,0,false,"我的工作台",true,"","",""));
             for (int i = 1; i < vuserRoleMenuList.size(); i++) {
                 //循环添加子集数据
-                MenuTreeNode menuTreeNode2 = new MenuTreeNode(vuserRoleMenuList.get(i).getMenuid(),vuserRoleMenuList.get(i).getParentId(),false,vuserRoleMenuList.get(i).getMenuname(),false,vuserRoleMenuList.get(i).getIcon(),vuserRoleMenuList.get(i).getHref(),vuserRoleMenuList.get(i).getTarget());
+                MenuTreeNode menuTreeNode2 = new MenuTreeNode(vuserRoleMenuList.get(i).getMenuid(),vuserRoleMenuList.get(i).getParentId(),false,vuserRoleMenuList.get(i).getMenuname(),false,vuserRoleMenuList.get(i).getIcon(), vuserRoleMenuList.get(i).getHref(),vuserRoleMenuList.get(i).getTarget());
                 menuTreeNode.add(menuTreeNode2);
             }
             return menuTreeNode.getChildren();
@@ -106,11 +108,15 @@ public class MenuController {
      */
     private boolean isBelongList(List<String> roleMenuIds,String str){
         boolean bResult = false;
-        for (String temp : roleMenuIds) {
-            if (temp.equals(str)) {
-                bResult = true;
-                break;
+        try{
+            for (String temp : roleMenuIds) {
+                if (temp.equalsIgnoreCase(str)) {
+                    bResult = true;
+                    break;
+                }
             }
+        }catch (Exception ex){
+
         }
         return bResult;
     }

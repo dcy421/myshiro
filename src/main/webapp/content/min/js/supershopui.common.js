@@ -1794,7 +1794,7 @@ $(function () {
                         a.addClass("ajaxify");
                     }
                      else if (item.targetType != null && item.targetType === "iframe-tab") {
-                        var href = 'addTabs({id:\'' + item.id + '\',title: \'' + item.text + '\',close: true,url: \'' + item.url+'&number='+Math.random() + '\'});';
+                        var href = 'addTabs({id:\'' + item.id + '\',title: \'' + item.text + '\',close: true,url: \''+ctx+ item.url+'&number='+Math.random() + '\'});';
                         a.attr('onclick', href);
                      }
                      else if (item.targetType != null && item.targetType === "iframe") { //代表单iframe页面

@@ -4,32 +4,52 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.dcy.config.Global;
 import com.dcy.model.BootStrapTable;
+import com.dcy.model.SysRole;
+import com.dcy.model.SysUserRole;
 import com.dcy.service.SysDictService;
+import com.dcy.service.SysRoleService;
 import com.dcy.utils.Common;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.dcy.model.SysUser;
 import com.dcy.service.SysUserService;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.ModelAndView;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
+/**
+ * 用户控制器
+ */
 @Controller
-@RequestMapping("${adminPath}/user")
+@RequestMapping("${adminPath}/sys/user")
 public class UserController extends BaseController {
 	
 	private Logger logger = Logger.getLogger(UserController.class);
-	
+
+	/**
+	 * 用户service
+	 */
 	@Resource
 	private SysUserService sysUserService;
+	/**
+	 * 字典service
+	 */
 	@Resource
 	private SysDictService sysDictService;
+	/**
+	 * 角色service
+	 */
+	@Resource
+	private SysRoleService sysRoleService;
 
 
 	/**
@@ -61,37 +81,115 @@ public class UserController extends BaseController {
 		return map;
 	}
 
+	/**
+	 * 添加用户页面
+	 * @param request
+	 * @param response
+	 * @param model
+	 * @return
+	 */
 	@RequestMapping(method=RequestMethod.GET,value="/add")
-	public String userAdd(HttpServletRequest request,HttpServletResponse response,Model model) {
+	public String add(HttpServletRequest request,HttpServletResponse response,Model model) {
 		//logger.info("用户添加 Get");
-		request.setAttribute("sexList",sysDictService.selectListByType("sex"));
+		try {
+			request.setAttribute("sexList",sysDictService.selectListByType("sex"));
+			request.setAttribute("roleList",sysRoleService.selectAll());
+		}catch (Exception ex){
+			logger.error("add-=-"+ex.toString());
+		}
 		return "/sys/userAdd";
 	}
 
 	/**
-	 * 保存user
-	 * @param sysUser
+	 * 修改用户页面
+	 * @param request
+	 * @param id
+	 * @return
+	 */
+	@RequestMapping(method=RequestMethod.GET,value="/update")
+	public String update(HttpServletRequest request,Integer id) {
+		//logger.info("用户添加 Get");
+		List<SysRole> roleoldList = new ArrayList<SysRole>();
+		List<SysRole> rolenewList = new ArrayList<SysRole>();
+		try {
+			request.setAttribute("sexList",sysDictService.selectListByType("sex"));
+			request.setAttribute("user",sysUserService.selectByPrimaryKey(id));
+			List<SysRole> sysRoleList = sysRoleService.selectAll();
+			//返回当前人的权限
+			List<String> strings = sysRoleService.getRoleIdByUserId(id);
+			for (SysRole s:sysRoleList){
+				//int 转换字符串
+				if (isBelongList(strings,String.valueOf(s.getId()))){
+					//如果存在 就表示当前人有这个角色 往newlist添加
+					rolenewList.add(s);
+				}else {
+					//否则往 oldlist添加
+					roleoldList.add(s);
+				}
+			}
+			//人员没有这个角色
+			request.setAttribute("roleoldList",roleoldList);
+			//人员有这个角色
+			request.setAttribute("rolenewList",rolenewList);
+		}catch (Exception ex){
+			logger.error("update-=-"+ex.toString());
+		}
+		return "/sys/userUpd";
+	}
+
+	/**
+	 *  保存user
+	 * @param sysUser  对象
 	 * @param model
-	 * @param flag add 添加  update  修改
+	 * @param flag  add添加   update 修改
+	 * @param roleids   角色ids
 	 * @return
 	 */
 	@ResponseBody
-	@RequestMapping(method=RequestMethod.POST,value="/SaveSysUser")
-	public int userAdd(SysUser sysUser,Model model,String flag) {
+	@RequestMapping(method=RequestMethod.POST,value="/save")
+	public int save(SysUser sysUser,Model model,String flag,@RequestParam(value = "roleids")  Integer[]  roleids) {
 		//logger.info("用户添加 Post");
 		int count = 0;
 		try {
 			if ("add".equalsIgnoreCase(flag)){
 				count = sysUserService.insertSelective(sysUser);
+				if (count > 0 && roleids.length > 0){
+					//根据userid 和roleids  返回一个list userrole对象  如果有对象 那就执行批量添加
+					getUserRoles(sysUser.getId(),roleids);
+				}
 			}else {
 				count = sysUserService.updateByPrimaryKeySelective(sysUser);
+				if (count > 0 && roleids.length > 0){
+					//删除user_role表数据
+					sysUserService.deleteUserRoleByUserId(sysUser.getId());
+					//根据userid 和roleids  返回一个list userrole对象  如果有对象 那就执行批量添加
+					getUserRoles(sysUser.getId(),roleids);
+				}
 			}
 		} catch (Exception e) {
-			logger.error("userAdd-=-"+e.toString());
+			logger.error("save-=-"+e.toString());
 		}
 		return count;
 	}
 
+	/**
+	 * 根据userid 和roleids  返回一个list userrole对象  如果有对象 那就执行批量添加
+	 * @param userID
+	 * @param roleids
+	 * @return
+	 */
+	private void getUserRoles(Integer userID,Integer[] roleids){
+		List<SysUserRole> sysUserRoleList = new ArrayList<SysUserRole>();
+		for (int i = 0; i < roleids.length; i++) {
+			SysUserRole sysUserRole = new SysUserRole();
+			sysUserRole.setUserId(userID);
+			sysUserRole.setRoleId(roleids[i]);
+			sysUserRoleList.add(sysUserRole);
+		}
+		if (sysUserRoleList.size()>0){
+			sysUserService.insertUserRoleBatch(sysUserRoleList);//批量添加
+		}
+	}
 	/**
 	 * 检测是否有这个账户
 	 * @param userName
@@ -107,5 +205,53 @@ public class UserController extends BaseController {
 			logger.error("getRepeatUserName-=-:"+e.toString());
 		}
 		return count;
+	}
+
+	/**
+	 * 批量删除
+	 * @param ids
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(method= RequestMethod.POST,value="/delete")
+	public int delete(@RequestParam(value = "ids[]")  Integer[]  ids){
+		int count = 0;
+		try {
+			count =sysUserService.deleteByIds(ids);
+		}catch (Exception e){
+			logger.error("delete-=-:"+e.toString());
+		}
+		return count;
+	}
+
+	/**
+	 * 上传头像
+	 * @param files
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping("/uploadPicture")
+	public String uploads(@RequestParam("file")MultipartFile files, HttpServletRequest request, HttpServletResponse response) {
+		try {
+			//一个文件
+			super.upload(files, Global.USER,request);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return super.getFileName();
+	}
+
+
+	private boolean isBelongList(List<String> roleMenuIds,String str){
+		boolean bResult = false;
+		for (String temp : roleMenuIds) {
+			if (temp.equalsIgnoreCase(str)) {
+				bResult = true;
+				break;
+			}
+		}
+		return bResult;
 	}
 }

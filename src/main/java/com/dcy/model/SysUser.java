@@ -1,5 +1,7 @@
 package com.dcy.model;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import java.util.Date;
 
 public class SysUser {
@@ -81,7 +83,12 @@ public class SysUser {
     /**
      * 生日
      */
+    @DateTimeFormat( pattern = "yyyy-MM-dd" )
     private Date birthday;
+
+
+
+    private String sexname;
 
 
     /**
@@ -341,5 +348,13 @@ public class SysUser {
 
     public String getCredentialsSalt() {
         return username + salt;
+    }
+
+    public String getSexname() {
+        return sexname;
+    }
+
+    public void setSexname(String sexname) {
+        this.sexname = sexname;
     }
 }

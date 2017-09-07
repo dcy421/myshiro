@@ -78,4 +78,17 @@ public interface SysRoleService {
      * @return
      */
     List<String> selectRoleMenu(Integer roleId);
+
+    /**
+     *  查询所有的role
+     * @return
+     */
+    List<SysRole> selectAll();
+
+    /**
+     * 根据userid 查询权限
+     * @param userId
+     * @return
+     */
+    List<String> getRoleIdByUserId(Integer userId);
 }

@@ -1,8 +1,8 @@
 <%--
   Created by IntelliJ IDEA.
   User: Administrator
-  Date: 2017/9/4
-  Time: 13:01
+  Date: 2017/6/30
+  Time: 8:37
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
@@ -11,21 +11,15 @@
 <head>
     <head>
         <meta charset="utf-8" />
-        <title>用户列表</title>
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta content="width=device-width, initial-scale=1" name="viewport" />
-        <meta content="" name="description" />
-        <meta content="" name="author" />
+        <title>角色列表</title>
         <jsp:include page="/WEB-INF/view/include/head.jsp"/>
     </head>
-
-
 </head>
 
 <body>
 <section class="content-header">
     <h1>
-        人员管理
+        角色管理
         <%--<small>bootstrap-table管理表格</small>--%>
     </h1>
 </section>
@@ -42,20 +36,11 @@
                     <div class="panel-body">
                         <form class="form-inline" method="post" id="userForm" name="userForm" >
                             <div class="form-group">
-                                <label for="username">用户名</label>
-                                <input type="text" class="form-control" id="username" name="username" placeholder="用户名">
-                            </div>
-                            <div class="form-group">
-                                <label for="email">Email</label>
-                                <input type="text" class="form-control" id="email" name="email" placeholder="Email">
-                            </div>
-                            <div class="form-group">
-                                <label for="phone">手机号</label>
-                                <input type="text" class="form-control" id="phone" name="phone" placeholder="手机号">
+                                <label for="name">角色名称</label>
+                                <input type="text" class="form-control" id="name" placeholder="角色名称">
                             </div>
                             <button type="button" id="btn_query" class="btn btn-success"><i class="fa fa-search"></i>&nbsp;查询</button>
                             <button type="reset" id="btn_reset" class="btn btn-primary"><i class="fa fa-undo"></i>&nbsp;重置</button>
-
                         </form>
                     </div>
                 </div>
@@ -64,21 +49,11 @@
                     <button id="btn_add" type="button" class="btn btn-default">
                         <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>新增
                     </button>
-
                     <button id="btn_edit" type="button" class="btn btn-default" disabled>
                         <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>修改
                     </button>
-
                     <button id="btn_delete" type="button" class="btn btn-default" disabled>
                         <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>删除
-                    </button>
-
-                    <button id="btn_grant" type="button" class="btn btn-default" disabled>
-                        <span class="fa fa-edit" aria-hidden="true"></span>授权
-                    </button>
-
-                    <button id="btn_export" type="button" class="btn btn-default" >
-                        <span class="glyphicon glyphicon-export" aria-hidden="true"></span>导出
                     </button>
                 </div>
                 <div class="table-scrollable">
@@ -87,84 +62,51 @@
                 </div>
             </div>
             <!-- END SAMPLE TABLE PORTLET-->
-
         </div>
-
-
     </div>
-
 </section>
 </body>
 <jsp:include page="/WEB-INF/view/include/foot.jsp"/>
 <script src="${pageContext.request.contextPath}/content/plugins/bootstrap-table/bootstrap-table.js"></script>
 <script src="${pageContext.request.contextPath}/content/plugins/bootstrap-table/locale/bootstrap-table-zh-CN.js"></script>
 <script src="${pageContext.request.contextPath}/content/common/common.server.js"></script>
-<script src="${pageContext.request.contextPath}/content/plugins/moment/moment.js"></script>
 <script>
     var $table = $('#empUserList'),
         $query = $('#btn_query'),
         $remove = $('#btn_delete'),
         $edit = $('#btn_edit'),
-        $grant = $('#btn_grant'),
         $add = $('#btn_add'),
-        $export = $('#btn_export'),
         selections = [];
     $(function() {
         $table.bootstrapTable({
-            url : '${ctx}/sys/user/getUserPageList',
-            /*detailView:true,
-             detailFormatter:detailFormatter,*/
+            url : '${ctx}/sys/role/getRolePageList',
             queryParams : queryParams,
-            buttonsAlign:"right",  //按钮位置
+            //showExport:true,//是否显示导出按钮
+            //exportDataType:"basic",
+            //buttonsAlign:"right",  //按钮位置
             toolbar : "#toolbar",// 指定工具栏
             uniqueId : "id", // 每一行的唯一标识
             columns : [ {
                 checkbox : true
             },{
-                title : '用户名',
-                field : 'username', // 字段
-                align : 'center', // 对齐方式（左 中 右）
-                valign : 'middle', //
-                sortable : true
-            },{
-                title : '真实姓名',
+                title : '角色名',
                 field : 'name', // 字段
                 align : 'center', // 对齐方式（左 中 右）
                 valign : 'middle', //
                 sortable : true
-            }, {
-                title : '邮箱',
-                field : 'email',
-                align : 'center',
-                valign : 'middle',
-                sortable : true
-            }, {
-                title : '电话',
-                field : 'phone',
-                align : 'center',
-                valign : 'middle',
+            },{
+                title : '英文名',
+                field : 'enname', // 字段
+                align : 'center', // 对齐方式（左 中 右）
+                valign : 'middle', //
                 sortable : true
             },{
-                title : '性别',
-                field : 'sexname',
-                align : 'center',
-                valign : 'middle',
-                sortable : true,
-                formatter:sexFormatter
-            }, {
-                title : '生日',
-                field : 'birthday',
-                align : 'center',
-                valign : 'middle',
-                sortable : true,
-                formatter :birthdayFormatter
-            },  {
                 title : '启动',
-                field : 'locked',
+                field : 'available',
                 align : 'center',
                 valign : 'middle',
                 sortable : true,
-                formatter :lockedFormatter
+                formatter :operateFormatter
             } ],
             onLoadSuccess: function(){  //加载成功时执行
                 //layer.msg("加载成功");
@@ -195,7 +137,6 @@
             'check-all.bs.table uncheck-all.bs.table', function () {
             $remove.prop('disabled', !$table.bootstrapTable('getSelections').length);
             $edit.prop('disabled', !$table.bootstrapTable('getSelections').length);
-            $grant.prop('disabled', !$table.bootstrapTable('getSelections').length);
             // save your data, here just save the current page
             selections = getIdSelections();
         });
@@ -203,40 +144,25 @@
             $table.bootstrapTable('refresh');	//从新加载数据
         });
         $add.click(function () {
-            layer_show("用户添加","${ctx}/sys/user/add","800","600");
-            //addTabs(({ id: '10008111', title: '用户添加', close: false, url: '/user/userAdd' }));
-            /*console.log($('.page-tabs-content', parent.document).hide()) ;
-             console.log($('.page-tabs-content').hide()) ;*/
-            /*
-             //是否找到父级的iframe
-             console.log($('.page-tabs-content', parent.document).length>0) ;
-             console.log($('.page-tabs-content').length>0) ;*/
+            layer_show("角色添加","${ctx}/sys/role/add","800","600");
         });
         $edit.click(function () {
             if (selections.length != 1) {
                 $.fn.modalAlert('请选择一条数据进行编辑！','error');
                 return false;
             } else {
-                layer_show("用户修改","${ctx}/sys/user/update?id="+selections[0],"800","600");
-
-            }
-        });
-        $grant.click(function () {
-            if (selections.length != 1) {
-                $.fn.modalAlert('请选择一条数据进行授权！','error');
-                return false;
-            } else {
-                layer_show("用户授权","${ctx}/sys/user/grant?id="+selections[0],"800","600");
+                layer_show("角色修改","${ctx}/sys/role/update?id="+selections[0],"800","600");
             }
         });
         $remove.click(function () {
+            console.log(selections.length);
             if (selections.length < 1) {
                 $.fn.modalAlert('请选择一条或多条数据进行删除！','error');
             } else {
                 //询问框
                 $.fn.modalConfirm ('确定要删除所选数据？', function () {
                     $.ajax({
-                        url:'${ctx}/sys/user/delete',
+                        url:'${ctx}/sys/role/delete',
                         type: "Post",
                         data:{ids:selections},
                         dataType : "json",
@@ -252,10 +178,7 @@
                 });
             }
         });
-        $export.click(function () {
-            $('#userForm').attr('action', "${ctx}/sys/user/exportUserList");
-            $('#userForm').submit();
-        });
+
         $("body").keydown(function() {
             if (event.keyCode == "13") {//keyCode=13是回车键
                 if ($query.length > 0){
@@ -264,13 +187,11 @@
             }
         });
         $table.on('switchChange.bootstrapSwitch','.switch',function (event,state) {
-            //console.log(state);
-            //console.log($(this).attr('data-id'));
             var id = $(this).attr('data-id');
             $.ajax({
-                url:'${ctx}/sys/user/save',
+                url:'${ctx}/sys/role/save',
                 type: "Post",
-                data:{locked:!state,id:id,flag:"update"},
+                data:{available:!state,id:id,flag:"grant"},
                 dataType : "json",
                 success:function(result){
                     if(result > 0){
@@ -284,42 +205,14 @@
         });
     });
 
-    function detailFormatter(index, row) {
-        var html = [];
-        $.each(row, function (key, value) {
-            html.push('<p><b>' + key + ':</b> ' + value + '</p>');
-        });
-        return html.join('');
-    }
 
-    function sexFormatter(value, row, index) {
+    function operateFormatter(value, row, index) {
+        //console.log(value);
         var str = "";
-        if(value == "男"){
-            str = "<span class=\"label label-warning\">男</span>";
-        }else {
-            str = "<span class=\"label label-info\">女</span>";
-        }
-        return str;
-    }
-
-    function lockedFormatter(value, row, index) {
-        var str = "";
-        /*if(!value){
-            str = "<span class=\"label label-success\">启动</span>";
-        }else {
-            str = "<span class=\"label label-danger\">关闭</span>";
-        }*/
         if(!value){
             str = "<div class='switch switch-mini' data-on='primary' data-off='info' data-id='"+row.id+"'><input type='checkbox' checked /></div>";
         }else {
             str = "<div class='switch switch-mini' data-on='primary' data-off='info' data-id='"+row.id+"'><input type='checkbox' /></div>";
-        }
-        return str;
-    }
-    function birthdayFormatter(value, row, index) {
-        var str = "";
-        if(value != "" && value != null){
-            str = moment(value).format('YYYY-MM-DD');
         }
         return str;
     }
@@ -340,12 +233,12 @@
             sort: params.sort,  //排序列名
             order:params.order, //排序方式
             search:params.search,   //搜索框参数
-            username:$("#username").val(),
-            email:$("#email").val(),
-            phone:$("#phone").val()
+            name:$("#name").val()
+            //username:$("#username").val()
             //loginFlag:$("#loginFlag").val()
         };
         return temp;
     }
 </script>
 </html>
+

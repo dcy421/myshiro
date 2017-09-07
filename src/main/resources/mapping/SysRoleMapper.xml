@@ -44,7 +44,7 @@
       )
   </insert>
 
-  <!--返回自增列   调用  user.id-->
+  <!--返回自增列   调用  role.id-->
   <insert id="insertSelective" parameterType="com.dcy.model.SysRole" useGeneratedKeys="true" keyProperty="id">
     insert into sys_role
     <trim prefix="(" suffix=")" suffixOverrides="," >
@@ -167,5 +167,14 @@
     where RoleId = #{roleId,jdbcType=INTEGER}
   </select>
 
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select id,name from sys_role
+    where available = 0
+  </select>
+
+  <select id="getRoleIdByUserId" resultType="java.lang.String" >
+    select RoleId
+    from sys_user_role WHERE UserId  = #{userId,jdbcType=INTEGER}
+  </select>
 
 </mapper>

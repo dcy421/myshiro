@@ -18,6 +18,7 @@
     <result column="remarks" property="remarks" jdbcType="VARCHAR" />
     <result column="sex" property="sex" jdbcType="INTEGER" />
     <result column="birthday" property="birthday" jdbcType="DATE" />
+    <result column="sexName" property="sexname" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
     u.id, u.departmentID, u.username, u.password, u.salt, u.locked, u.name, u.email, u.phone, u.photo, u.dataRange,
@@ -75,7 +76,8 @@
     #{loginDate,jdbcType=TIMESTAMP}, #{remarks,jdbcType=VARCHAR}, #{sex,jdbcType=INTEGER},
     #{birthday,jdbcType=DATE})
   </insert>
-  <insert id="insertSelective" parameterType="com.dcy.model.SysUser" >
+  <!-- 返回 -->
+  <insert id="insertSelective" parameterType="com.dcy.model.SysUser" useGeneratedKeys="true" keyProperty="id">
     insert into sys_user
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -275,11 +277,11 @@
 
   <select id="getUserPageList" resultMap="BaseResultMap">
     select
-    <include refid="Base_Column_List" />
+    <include refid="Base_Column_List" />,d.NAME as sexName
     from sys_user u
+    INNER JOIN (SELECT d.`code`,d.`name` FROM sys_dict d WHERE d.type = 'sex') d on u.sex = d.`code`
     WHERE 1=1
     <include refid="Where_Sql"/>
-
     <include refid="OrderBy_Sql"/>
     LIMIT #{BST.offset},#{BST.limit}
   </select>
@@ -292,7 +294,7 @@
   <select id="getPermissionsByUserName" resultType="java.lang.String">
     SELECT m.permission FROM sys_user u INNER JOIN sys_user_role sur on u.id = sur.userID INNER JOIN sys_role r on sur.roleID = r.id
     INNER JOIN sys_role_menu srm on r.id = srm.roleID INNER JOIN sys_menu m on srm.menuID = m.id
-    WHERE u.username = #{username,jdbcType=VARCHAR} AND available = 0 and permission != ''
+    WHERE u.username = #{username,jdbcType=VARCHAR} AND m.available = 0 and permission != ''
   </select>
 
   <delete id="deleteUserRoleByUserId" parameterType="java.lang.Integer" >

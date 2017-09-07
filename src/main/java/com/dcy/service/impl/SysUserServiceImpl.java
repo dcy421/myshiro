@@ -49,7 +49,7 @@ public class SysUserServiceImpl implements SysUserService {
 
 	public int updateByPrimaryKeySelective(SysUser record) {
 		//赋值加密之后新的密码
-		passwordHelper.encryptPassword(record);
+		//passwordHelper.encryptPassword(record);
 		return sysUserMapper.updateByPrimaryKeySelective(record);
 	}
 

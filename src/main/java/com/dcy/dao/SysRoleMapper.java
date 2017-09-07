@@ -93,4 +93,17 @@ public interface SysRoleMapper {
      * @return
      */
     List<String> selectRoleMenu(@Param(value = "roleId") Integer roleId);
+
+    /**
+     *  查询所有的role
+     * @return
+     */
+    List<SysRole> selectAll();
+
+    /**
+     * 根据userid 查询权限
+     * @param userId
+     * @return
+     */
+    List<String> getRoleIdByUserId(@Param(value = "userId")Integer userId);
 }

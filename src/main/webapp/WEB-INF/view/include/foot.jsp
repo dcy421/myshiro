@@ -14,4 +14,5 @@
 <script src="${pageContext.request.contextPath}/content/ui/global/bootstrap/js/bootstrap.min.js"></script>
 <script src="${pageContext.request.contextPath}/content/min/js/supershopui.common.js"></script>
 <script src="${pageContext.request.contextPath}/content/plugins/iCheck/icheck.min.js"></script>
+<script src="${pageContext.request.contextPath}/content/ui/global/bootstrap-switch/js/bootstrap-switch.js"></script>
 <script src="${pageContext.request.contextPath}/content/common/layer/layer.js"></script>

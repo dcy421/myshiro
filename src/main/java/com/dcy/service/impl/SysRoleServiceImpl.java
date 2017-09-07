@@ -60,4 +60,12 @@ public class SysRoleServiceImpl implements SysRoleService {
     public List<String> selectRoleMenu(Integer roleId) {
         return sysRoleMapper.selectRoleMenu(roleId);
     }
+
+    public List<SysRole> selectAll() {
+        return sysRoleMapper.selectAll();
+    }
+
+    public List<String> getRoleIdByUserId(Integer userId) {
+        return sysRoleMapper.getRoleIdByUserId(userId);
+    }
 }

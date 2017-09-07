@@ -1,5 +1,6 @@
 package com.dcy.model;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 public class SysMenu {
@@ -26,7 +27,7 @@ public class SysMenu {
     /**
      * 排序
      */
-    private Date sort;
+    private BigDecimal sort;
 
     /**
      * 链接
@@ -126,7 +127,7 @@ public class SysMenu {
      * 排序
      * @return sort 排序
      */
-    public Date getSort() {
+    public BigDecimal getSort() {
         return sort;
     }
 
@@ -134,7 +135,7 @@ public class SysMenu {
      * 排序
      * @param sort 排序
      */
-    public void setSort(Date sort) {
+    public void setSort(BigDecimal sort) {
         this.sort = sort;
     }
 
