@@ -53,7 +53,9 @@
                                 <label for="phone">手机号</label>
                                 <input type="text" class="form-control" id="phone" name="phone" placeholder="手机号">
                             </div>
-                            <button type="button" id="btn_query" class="btn btn-success"><i class="fa fa-search"></i>&nbsp;查询</button>
+                            <shiro:hasPermission name="sys:user:search">
+                                <button type="button" id="btn_query" class="btn btn-success"><i class="fa fa-search"></i>&nbsp;查询</button>
+                            </shiro:hasPermission>
                             <button type="reset" id="btn_reset" class="btn btn-primary"><i class="fa fa-undo"></i>&nbsp;重置</button>
 
                         </form>
@@ -61,25 +63,26 @@
                 </div>
 
                 <div id="toolbar" class="btn-group">
-                    <button id="btn_add" type="button" class="btn btn-default">
-                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>新增
-                    </button>
-
-                    <button id="btn_edit" type="button" class="btn btn-default" disabled>
-                        <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>修改
-                    </button>
-
-                    <button id="btn_delete" type="button" class="btn btn-default" disabled>
-                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>删除
-                    </button>
-
-                    <button id="btn_grant" type="button" class="btn btn-default" disabled>
-                        <span class="fa fa-edit" aria-hidden="true"></span>授权
-                    </button>
-
-                    <button id="btn_export" type="button" class="btn btn-default" >
-                        <span class="glyphicon glyphicon-export" aria-hidden="true"></span>导出
-                    </button>
+                    <shiro:hasPermission name="sys:user:add">
+                        <button id="btn_add" type="button" class="btn btn-default">
+                            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>新增
+                        </button>
+                    </shiro:hasPermission>
+                    <shiro:hasPermission name="sys:user:update">
+                        <button id="btn_edit" type="button" class="btn btn-default" disabled>
+                            <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>修改
+                        </button>
+                    </shiro:hasPermission>
+                    <shiro:hasPermission name="sys:user:delete">
+                        <button id="btn_delete" type="button" class="btn btn-default" disabled>
+                            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>删除
+                        </button>
+                    </shiro:hasPermission>
+                    <shiro:hasPermission name="sys:user:export">
+                        <button id="btn_export" type="button" class="btn btn-default" >
+                            <span class="glyphicon glyphicon-export" aria-hidden="true"></span>导出
+                        </button>
+                    </shiro:hasPermission>
                 </div>
                 <div class="table-scrollable">
                     <table class="table-striped table-hover table-bordered"  id="empUserList">
@@ -105,7 +108,6 @@
         $query = $('#btn_query'),
         $remove = $('#btn_delete'),
         $edit = $('#btn_edit'),
-        $grant = $('#btn_grant'),
         $add = $('#btn_add'),
         $export = $('#btn_export'),
         selections = [];
@@ -195,7 +197,6 @@
             'check-all.bs.table uncheck-all.bs.table', function () {
             $remove.prop('disabled', !$table.bootstrapTable('getSelections').length);
             $edit.prop('disabled', !$table.bootstrapTable('getSelections').length);
-            $grant.prop('disabled', !$table.bootstrapTable('getSelections').length);
             // save your data, here just save the current page
             selections = getIdSelections();
         });
@@ -219,14 +220,6 @@
             } else {
                 layer_show("用户修改","${ctx}/sys/user/update?id="+selections[0],"800","600");
 
-            }
-        });
-        $grant.click(function () {
-            if (selections.length != 1) {
-                $.fn.modalAlert('请选择一条数据进行授权！','error');
-                return false;
-            } else {
-                layer_show("用户授权","${ctx}/sys/user/grant?id="+selections[0],"800","600");
             }
         });
         $remove.click(function () {

@@ -39,22 +39,30 @@
                                 <label for="name">角色名称</label>
                                 <input type="text" class="form-control" id="name" placeholder="角色名称">
                             </div>
-                            <button type="button" id="btn_query" class="btn btn-success"><i class="fa fa-search"></i>&nbsp;查询</button>
+                            <shiro:hasPermission name="sys:role:search">
+                                <button type="button" id="btn_query" class="btn btn-success"><i class="fa fa-search"></i>&nbsp;查询</button>
+                            </shiro:hasPermission>
                             <button type="reset" id="btn_reset" class="btn btn-primary"><i class="fa fa-undo"></i>&nbsp;重置</button>
                         </form>
                     </div>
                 </div>
 
                 <div id="toolbar" class="btn-group">
-                    <button id="btn_add" type="button" class="btn btn-default">
-                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>新增
-                    </button>
-                    <button id="btn_edit" type="button" class="btn btn-default" disabled>
-                        <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>修改
-                    </button>
-                    <button id="btn_delete" type="button" class="btn btn-default" disabled>
-                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>删除
-                    </button>
+                    <shiro:hasPermission name="sys:role:add">
+                        <button id="btn_add" type="button" class="btn btn-default">
+                            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>新增
+                        </button>
+                    </shiro:hasPermission>
+                    <shiro:hasPermission name="sys:role:update">
+                        <button id="btn_edit" type="button" class="btn btn-default" disabled>
+                            <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>修改
+                        </button>
+                    </shiro:hasPermission>
+                    <shiro:hasPermission name="sys:role:delete">
+                        <button id="btn_delete" type="button" class="btn btn-default" disabled>
+                            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>删除
+                        </button>
+                    </shiro:hasPermission>
                 </div>
                 <div class="table-scrollable">
                     <table class="table-striped table-hover table-bordered"  id="empUserList">

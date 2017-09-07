@@ -178,7 +178,7 @@
   <select id="selectAll" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select
     <include refid="Base_Column_List" />
-    from sys_menu WHERE available = 0
+    from sys_menu WHERE available = 0 ORDER by sort
   </select>
 
   <select id="getMenuListByUserName" resultMap="BaseResultMap2" parameterType="java.lang.String" >

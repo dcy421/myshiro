@@ -7,6 +7,8 @@ import com.dcy.service.SysDictService;
 import com.dcy.service.SysRoleService;
 import com.dcy.utils.Common;
 import org.apache.log4j.Logger;
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -40,6 +42,7 @@ public class RoleController {
      * @param model
      * @return
      */
+    @RequiresPermissions("sys:role:search")
     @RequestMapping("/index")
     public String index(HttpServletRequest request, Model model){
         return "/sys/roleIndex";
@@ -52,6 +55,7 @@ public class RoleController {
      * @param sysRole
      * @return
      */
+    @RequiresPermissions("sys:role:search")
     @ResponseBody
     @RequestMapping(method= RequestMethod.POST,value="/getRolePageList")
     public Map getRolePageList(BootStrapTable bootStrapTable, SysRole sysRole){
@@ -70,6 +74,7 @@ public class RoleController {
      * @param model
      * @return
      */
+    @RequiresPermissions("sys:role:add")
     @RequestMapping("/add")
     public String roleAdd(HttpServletRequest request, Model model){
         return "/sys/roleAdd";
@@ -101,6 +106,7 @@ public class RoleController {
      * @param ids   权限级的数组
      * @return
      */
+    @RequiresPermissions(value={"sys:role:add","sys:role:update"},logical= Logical.OR)
     @ResponseBody
     @RequestMapping(method= RequestMethod.POST,value="/save")
     public int SaveSysRole(SysRole sysRole,String flag,@RequestParam(value = "ids")  Integer[]  ids){
@@ -157,6 +163,7 @@ public class RoleController {
      * @param request
      * @return
      */
+    @RequiresPermissions("sys:role:update")
     @RequestMapping(method= RequestMethod.GET,value="/update")
     public ModelAndView roleUpd(Integer id, HttpServletRequest request){
         ModelAndView modelAndView = new ModelAndView();
@@ -175,6 +182,7 @@ public class RoleController {
      * @param ids
      * @return
      */
+    @RequiresPermissions("sys:role:delete")
     @ResponseBody
     @RequestMapping(method= RequestMethod.POST,value="/delete")
     public int delete(@RequestParam(value = "ids[]")  Integer[]  ids){

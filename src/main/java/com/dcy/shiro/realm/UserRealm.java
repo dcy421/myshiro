@@ -52,6 +52,7 @@ public class UserRealm extends AuthorizingRealm {
 	 */
 	@Override
 	protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
+		//logger.info(" 认证 ");
 		//token中储存着输入的用户名和密码
         //UsernamePasswordToken upToken = (UsernamePasswordToken)token;
         String userName = (String) token.getPrincipal();
@@ -76,7 +77,7 @@ public class UserRealm extends AuthorizingRealm {
 	}
 
 	/**
-	 * 清空之前  授权   缓存的AuthorizationInfo   授权
+	 * 清空之前  授权   缓存的AuthorizationInfo
 	 */
 	@Override
     public void clearCachedAuthorizationInfo(PrincipalCollection principals) {
@@ -96,15 +97,24 @@ public class UserRealm extends AuthorizingRealm {
         super.clearCache(principals);
     }
 
+	/**
+	 * 授权
+	 */
     public void clearAllCachedAuthorizationInfo() {
         getAuthorizationCache().clear();
     }
 
+	/**
+	 * 认证
+	 */
     public void clearAllCachedAuthenticationInfo() {
         getAuthenticationCache().clear();
     }
 
-    public void clearAllCache() {
+	/**
+	 * 清除全部缓存
+	 */
+	public void clearAllCache() {
         clearAllCachedAuthenticationInfo();
         clearAllCachedAuthorizationInfo();
     }

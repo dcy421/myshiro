@@ -8,11 +8,13 @@ import com.dcy.service.SysMenuService;
 import com.dcy.service.SysRoleService;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -31,6 +33,16 @@ public class MenuController {
     @Resource
     private SysRoleService sysRoleService;
 
+    /**
+     * 跳转 菜单首页
+     * @param model
+     * @return
+     */
+    @RequestMapping(method= RequestMethod.GET,value = {"/index"})
+    public String index(HttpServletRequest request,Model model) {
+        request.setAttribute("menuList",sysMenuService.selectAll());
+        return "/sys/menuIndex";
+    }
     /**
      * 角色分页查询
      * @return

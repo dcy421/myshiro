@@ -4,6 +4,7 @@ import javax.annotation.Resource;
 
 import com.dcy.model.BootStrapTable;
 import com.dcy.model.SysUserRole;
+import com.dcy.shiro.realm.UserRealm;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +24,8 @@ public class SysUserServiceImpl implements SysUserService {
 	private SysUserMapper sysUserMapper;
 	@Resource
 	private PasswordHelper passwordHelper;
+	@Resource
+	private UserRealm userRealm;
 
 
 	public int getUserNameIsRepeat(String userName) {
@@ -50,6 +53,8 @@ public class SysUserServiceImpl implements SysUserService {
 	public int updateByPrimaryKeySelective(SysUser record) {
 		//赋值加密之后新的密码
 		//passwordHelper.encryptPassword(record);
+		//清空所有的缓存
+		userRealm.clearAllCache();
 		return sysUserMapper.updateByPrimaryKeySelective(record);
 	}
 
@@ -70,18 +75,26 @@ public class SysUserServiceImpl implements SysUserService {
 	}
 
 	public int deleteUserRoleByUserId(Integer userId) {
+		//清空所有的缓存
+		userRealm.clearAllCache();
 		return sysUserMapper.deleteUserRoleByUserId(userId);
 	}
 
 	public int insertUserRoleBatch(List<SysUserRole> sysUserRoles) {
+		//清空所有的缓存
+		userRealm.clearAllCache();
 		return sysUserMapper.insertUserRoleBatch(sysUserRoles);
 	}
 
 	public int deleteByPrimaryKey(Integer id) {
+		//清空所有的缓存
+		userRealm.clearAllCache();
 		return sysUserMapper.deleteByPrimaryKey(id);
 	}
 
 	public int deleteByIds(Integer[] ids) {
+		//清空所有的缓存
+		userRealm.clearAllCache();
 		return sysUserMapper.deleteByIds(ids);
 	}
 

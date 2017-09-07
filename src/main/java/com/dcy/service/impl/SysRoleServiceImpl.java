@@ -5,6 +5,7 @@ import com.dcy.model.BootStrapTable;
 import com.dcy.model.SysRole;
 import com.dcy.model.SysRoleMenu;
 import com.dcy.service.SysRoleService;
+import com.dcy.shiro.realm.UserRealm;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +21,8 @@ public class SysRoleServiceImpl implements SysRoleService {
 
     @Resource
     private SysRoleMapper sysRoleMapper;
+    @Resource
+    private UserRealm userRealm;
 
     public int insertSelective(SysRole record) {
         return sysRoleMapper.insertSelective(record);
@@ -30,6 +33,8 @@ public class SysRoleServiceImpl implements SysRoleService {
     }
 
     public int updateByPrimaryKeySelective(SysRole record) {
+        //清空所有的缓存
+        userRealm.clearAllCache();
         return sysRoleMapper.updateByPrimaryKeySelective(record);
     }
 
@@ -50,10 +55,14 @@ public class SysRoleServiceImpl implements SysRoleService {
     }
 
     public int deleteRoleMenu(Integer roleid) {
+        //清空所有的缓存
+        userRealm.clearAllCache();
         return sysRoleMapper.deleteRoleMenu(roleid);
     }
 
     public int deleteByids(Integer[] ids) {
+        //清空所有的缓存
+        userRealm.clearAllCache();
         return sysRoleMapper.deleteByids(ids);
     }
 

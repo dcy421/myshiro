@@ -12,6 +12,8 @@ import com.dcy.service.SysDictService;
 import com.dcy.service.SysRoleService;
 import com.dcy.utils.Common;
 import org.apache.log4j.Logger;
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -58,6 +60,7 @@ public class UserController extends BaseController {
 	 * @param model
 	 * @return
 	 */
+	@RequiresPermissions("sys:user:search")
 	@RequestMapping(method= RequestMethod.GET,value = {"/index"})
 	public String index(SysUser sysUser, Model model) {
 		return "/sys/userIndex";
@@ -69,6 +72,7 @@ public class UserController extends BaseController {
 	 * @param sysUser
 	 * @return
 	 */
+	@RequiresPermissions("sys:user:search")
 	@ResponseBody
 	@RequestMapping(method= RequestMethod.POST,value={"/getUserPageList"})
 	public Map getUserList(BootStrapTable bootStrapTable, SysUser sysUser){
@@ -88,6 +92,7 @@ public class UserController extends BaseController {
 	 * @param model
 	 * @return
 	 */
+	@RequiresPermissions("sys:user:add")
 	@RequestMapping(method=RequestMethod.GET,value="/add")
 	public String add(HttpServletRequest request,HttpServletResponse response,Model model) {
 		//logger.info("用户添加 Get");
@@ -106,6 +111,7 @@ public class UserController extends BaseController {
 	 * @param id
 	 * @return
 	 */
+	@RequiresPermissions("sys:user:update")
 	@RequestMapping(method=RequestMethod.GET,value="/update")
 	public String update(HttpServletRequest request,Integer id) {
 		//logger.info("用户添加 Get");
@@ -145,6 +151,7 @@ public class UserController extends BaseController {
 	 * @param roleids   角色ids
 	 * @return
 	 */
+	@RequiresPermissions(value={"sys:user:add","sys:user:update"},logical= Logical.OR)
 	@ResponseBody
 	@RequestMapping(method=RequestMethod.POST,value="/save")
 	public int save(SysUser sysUser,Model model,String flag,@RequestParam(value = "roleids")  Integer[]  roleids) {
@@ -212,6 +219,7 @@ public class UserController extends BaseController {
 	 * @param ids
 	 * @return
 	 */
+	@RequiresPermissions("sys:user:delete")
 	@ResponseBody
 	@RequestMapping(method= RequestMethod.POST,value="/delete")
 	public int delete(@RequestParam(value = "ids[]")  Integer[]  ids){
