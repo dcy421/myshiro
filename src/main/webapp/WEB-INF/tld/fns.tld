@@ -127,4 +127,15 @@
         <example>${fns:pastDays(date)}</example>
     </function>
 
+
+    <!-- UserUtils -->
+    <function>
+        <description>获取当前用户对象</description>
+        <name>getUser</name>
+        <function-class>com.dcy.utils.UserUtils</function-class>
+        <function-signature>com.dcy.model.SysUser getUser()</function-signature>
+        <example>${fns:getUser()}</example>
+    </function>
+
+
 </taglib>

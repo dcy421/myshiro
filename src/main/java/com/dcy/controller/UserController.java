@@ -98,6 +98,7 @@ public class UserController extends BaseController {
 		//logger.info("用户添加 Get");
 		try {
 			request.setAttribute("sexList",sysDictService.selectListByType("sex"));
+			request.setAttribute("dataRangeList",sysDictService.selectListByType("data_range"));
 			request.setAttribute("roleList",sysRoleService.selectAll());
 		}catch (Exception ex){
 			logger.error("add-=-"+ex.toString());
@@ -119,6 +120,7 @@ public class UserController extends BaseController {
 		List<SysRole> rolenewList = new ArrayList<SysRole>();
 		try {
 			request.setAttribute("sexList",sysDictService.selectListByType("sex"));
+			request.setAttribute("dataRangeList",sysDictService.selectListByType("data_range"));
 			request.setAttribute("user",sysUserService.selectByPrimaryKey(id));
 			List<SysRole> sysRoleList = sysRoleService.selectAll();
 			//返回当前人的权限

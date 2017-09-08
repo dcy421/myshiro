@@ -282,6 +282,7 @@
     INNER JOIN (SELECT d.`code`,d.`name` FROM sys_dict d WHERE d.type = 'sex') d on u.sex = d.`code`
     WHERE 1=1
     <include refid="Where_Sql"/>
+    ${user.sql}
     <include refid="OrderBy_Sql"/>
     LIMIT #{BST.offset},#{BST.limit}
   </select>

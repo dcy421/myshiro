@@ -1,6 +1,7 @@
 package com.dcy.dao;
 
 import com.dcy.model.SysDepartment;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Map;
@@ -48,4 +49,10 @@ public interface SysDepartmentMapper {
      * @return
      */
     List<Map> selectByPrimaryKeyForList(Integer id);
+
+    /**
+     * 根据id 查询所在部门和所有的下属
+     * @return
+     */
+    List<Integer> selectByPrimaryKeyForIdList(@Param(value = "id") Integer id);
 }

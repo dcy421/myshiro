@@ -114,7 +114,16 @@
                             </div>--%>
                         </div>
                     </div>
-
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">数据范围</label>
+                        <div class="col-sm-7">
+                            <select class="form-control ignore" name="datarange" id="datarange">
+                                <c:forEach var="c" items="${dataRangeList}">
+                                    <option value="${c.code}">${c.name}</option>
+                                </c:forEach>
+                            </select>
+                        </div>
+                    </div>
                     <div class="form-group">
                         <label class="col-sm-3 control-label">角色</label>
                         <div class="col-sm-7">

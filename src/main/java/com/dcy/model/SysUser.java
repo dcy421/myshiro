@@ -91,6 +91,16 @@ public class SysUser {
     private String sexname;
 
 
+    // 数据范围（0：所有数据；1：所在部门数据；2:所在部门和直属下级数据; 3：所在部门下的所有数据；）
+    public static final int DATA_SCOPE_ALL = 0;
+    public static final int DATA_SCOPE_OFFICE = 1;
+    public static final int DATA_SCOPE_OFFICE_AND_CHILD = 2;
+    public static final int DATA_SCOPE_OFFICE_AND_ALL = 3;
+
+
+
+    private String sql;
+
     /**
      * 主键
      * @return id 主键
@@ -356,5 +366,22 @@ public class SysUser {
 
     public void setSexname(String sexname) {
         this.sexname = sexname;
+    }
+
+
+    public boolean isAdmin(){
+        return isAdmin(this.id);
+    }
+
+    public static boolean isAdmin(Integer id){
+        return id != null && "1".equals(id+"");
+    }
+
+    public String getSql() {
+        return sql;
+    }
+
+    public void setSql(String sql) {
+        this.sql = sql;
     }
 }

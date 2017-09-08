@@ -95,7 +95,12 @@
     select
     dep.id, dep.name, dep.parentID as pId, dep.parentIDs, dep.state,
     (SELECT d.`Name` FROM sys_department d where d.id = dep.parentID) as parentname
-    FROM sys_department dep WHERE FIND_IN_SET(id,queryChildrenAreaInfo(#{id,jdbcType=INTEGER}));
+    FROM sys_department dep WHERE dep.state = 0 AND FIND_IN_SET(id,queryChildrenAreaInfo(#{id,jdbcType=INTEGER}))
   </select>
+
+  <select id="selectByPrimaryKeyForIdList" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+    SELECT id FROM sys_department WHERE dep.state = 0 AND id = #{id,jdbcType=INTEGER} or parentID = #{id,jdbcType=INTEGER}
+  </select>
+
 
 </mapper>
