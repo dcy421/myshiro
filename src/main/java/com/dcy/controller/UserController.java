@@ -56,13 +56,13 @@ public class UserController extends BaseController {
 
 	/**
 	 * 跳转 人员首页
-	 * @param sysUser
+	 * @param request
 	 * @param model
 	 * @return
 	 */
 	@RequiresPermissions("sys:user:search")
 	@RequestMapping(method= RequestMethod.GET,value = {"/index"})
-	public String index(SysUser sysUser, Model model) {
+	public String index(HttpServletRequest request, Model model) {
 		return "/sys/userIndex";
 	}
 

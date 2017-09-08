@@ -90,4 +90,12 @@
       state = #{state,jdbcType=BIT}
     where id = #{id,jdbcType=INTEGER}
   </update>
+
+  <select id="selectByPrimaryKeyForList" parameterType="java.lang.Integer" resultType="java.util.HashMap">
+    select
+    dep.id, dep.name, dep.parentID as pId, dep.parentIDs, dep.state,
+    (SELECT d.`Name` FROM sys_department d where d.id = dep.parentID) as parentname
+    FROM sys_department dep WHERE FIND_IN_SET(id,queryChildrenAreaInfo(#{id,jdbcType=INTEGER}));
+  </select>
+
 </mapper>
