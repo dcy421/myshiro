@@ -38,7 +38,7 @@ public class MenuController {
      * @param model
      * @return
      */
-    @RequestMapping(method= RequestMethod.GET,value = {"/index"})
+    @RequestMapping(method= RequestMethod.GET,value = {"/index"},name = "菜单首页")
     public String index(HttpServletRequest request,Model model) {
         request.setAttribute("menuList",sysMenuService.selectAll());
         return "/sys/menuIndex";
@@ -48,7 +48,7 @@ public class MenuController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(method= RequestMethod.POST,value="/getMenuList")
+    @RequestMapping(method= RequestMethod.POST,value="/getMenuList",name = "角色添加的菜单数据")
     public List<Map> getMenuList(String flag, Integer roleId){
         List<Map> sysMenuList = new ArrayList<Map>();
         List<SysMenu> sysMenus = sysMenuService.selectAll();
@@ -89,7 +89,7 @@ public class MenuController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(method= RequestMethod.GET,value="/getMenuListByUserName")
+    @RequestMapping(method= RequestMethod.GET,value="/getMenuListByUserName",name = "获取左侧菜单树")
     public List<MenuTreeNode> getMenuListByUserName(String userName){
         //定义空的list
         List<MenuTreeNode> sysMenuList = new ArrayList<MenuTreeNode>();

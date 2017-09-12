@@ -3,6 +3,7 @@ package com.dcy.controller;
 import com.dcy.model.BootStrapTable;
 import com.dcy.model.SysRole;
 import com.dcy.model.SysRoleMenu;
+import com.dcy.service.SysDepartmentService;
 import com.dcy.service.SysDictService;
 import com.dcy.service.SysRoleService;
 import com.dcy.utils.Common;
@@ -31,10 +32,21 @@ import java.util.Map;
 @RequestMapping("${adminPath}/sys/role")
 public class RoleController {
     private Logger logger = Logger.getLogger(RoleController.class);
+    /**
+     * 角色service
+     */
     @Resource
     private SysRoleService sysRoleService;
+    /**
+     * 字典service
+     */
     @Resource
     private SysDictService sysDictService;
+    /**
+     * 部门service
+     */
+    @Resource
+    private SysDepartmentService sysDepartmentService;
 
     /**
      * 跳转页面
@@ -43,7 +55,7 @@ public class RoleController {
      * @return
      */
     @RequiresPermissions("sys:role:search")
-    @RequestMapping("/index")
+    @RequestMapping(method =RequestMethod.GET, value = "/index",name = "角色首页")
     public String index(HttpServletRequest request, Model model){
         return "/sys/roleIndex";
     }
@@ -57,7 +69,7 @@ public class RoleController {
      */
     @RequiresPermissions("sys:role:search")
     @ResponseBody
-    @RequestMapping(method= RequestMethod.POST,value="/getRolePageList")
+    @RequestMapping(method= RequestMethod.POST,value="/getRolePageList",name = "角色分页查询")
     public Map getRolePageList(BootStrapTable bootStrapTable, SysRole sysRole){
         Map map = new HashMap();
         try{
@@ -75,18 +87,19 @@ public class RoleController {
      * @return
      */
     @RequiresPermissions("sys:role:add")
-    @RequestMapping("/add")
+    @RequestMapping(method= RequestMethod.GET, value = "/add",name = "添加角色页面")
     public String roleAdd(HttpServletRequest request, Model model){
+        request.setAttribute("depList",sysDepartmentService.selectByPrimaryKeyForIdListRange());
         return "/sys/roleAdd";
     }
 
     /**
-     * 检测是否有这个账户
+     * 检测是否有这个角色
      * @param roleName
      * @return
      */
     @ResponseBody
-    @RequestMapping(method= RequestMethod.POST,value="/getRepeatRoleName")
+    @RequestMapping(method= RequestMethod.POST,value="/getRepeatRoleName",name = "检测是否有这个角色")
     public int getRepeatRoleName(String roleName){
         int count = 0;
         try {
@@ -108,7 +121,7 @@ public class RoleController {
      */
     @RequiresPermissions(value={"sys:role:add","sys:role:update"},logical= Logical.OR)
     @ResponseBody
-    @RequestMapping(method= RequestMethod.POST,value="/save")
+    @RequestMapping(method= RequestMethod.POST,value="/save",name = "角色添加修改操作")
     public int SaveSysRole(SysRole sysRole,String flag,@RequestParam(value = "ids")  Integer[]  ids){
         int count = 0;
         List<SysRoleMenu> sysRoleMenuList = new ArrayList<SysRoleMenu>();
@@ -164,11 +177,12 @@ public class RoleController {
      * @return
      */
     @RequiresPermissions("sys:role:update")
-    @RequestMapping(method= RequestMethod.GET,value="/update")
+    @RequestMapping(method= RequestMethod.GET,value="/update",name = "修改角色页面")
     public ModelAndView roleUpd(Integer id, HttpServletRequest request){
         ModelAndView modelAndView = new ModelAndView();
         try {
             SysRole sysRole = sysRoleService.selectByPrimaryKey(id);
+            modelAndView.addObject("depList",sysDepartmentService.selectByPrimaryKeyForIdListRange());
             modelAndView.addObject("role",sysRole);
             modelAndView.setViewName("/sys/roleUpd");
         }catch (Exception e){
@@ -184,7 +198,7 @@ public class RoleController {
      */
     @RequiresPermissions("sys:role:delete")
     @ResponseBody
-    @RequestMapping(method= RequestMethod.POST,value="/delete")
+    @RequestMapping(method= RequestMethod.POST,value="/delete",name = "删除角色")
     public int delete(@RequestParam(value = "ids[]")  Integer[]  ids){
         int count = 0;
         try {

@@ -123,6 +123,12 @@
             columns : [ {
                 checkbox : true
             },{
+                title : '部门',
+                field : 'departmentname', // 字段
+                align : 'center', // 对齐方式（左 中 右）
+                valign : 'middle', //
+                sortable : true
+            },{
                 title : '用户名',
                 field : 'username', // 字段
                 align : 'center', // 对齐方式（左 中 右）

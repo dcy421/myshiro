@@ -8,9 +8,10 @@
     <result column="enname" property="enname" jdbcType="VARCHAR" />
     <result column="available" property="available" jdbcType="BIT" />
     <result column="remarks" property="remarks" jdbcType="VARCHAR" />
+    <result column="departmentName" property="departmentname" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, departmentID, name, enname, available, remarks
+    r.id, r.departmentID, r.name, r.enname, r.available, r.remarks
   </sql>
 
   <sql id="Where_Sql" >
@@ -28,8 +29,8 @@
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
     <include refid="Base_Column_List" />
-    from sys_role
-    where id = #{id,jdbcType=INTEGER}
+    from sys_role r
+    where r.id = #{id,jdbcType=INTEGER}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from sys_role
@@ -127,8 +128,9 @@
 
   <select id="getRolePageList" resultMap="BaseResultMap">
     select
-    <include refid="Base_Column_List" />
-    from sys_role r  WHERE 1=1
+    <include refid="Base_Column_List" />,d.name as departmentName
+    from sys_role r  INNER JOIN sys_department d on r.departmentID = d.id
+    WHERE 1=1
     <include refid="Where_Sql"/>
     <include refid="OrderBy_Sql"/>
     LIMIT #{BST.offset},#{BST.limit}

@@ -37,7 +37,7 @@ public class DepmController {
      * @return
      */
     /*@RequiresPermissions("sys:depm:search")*/
-    @RequestMapping(method= RequestMethod.GET,value = {"/index"})
+    @RequestMapping(method= RequestMethod.GET,value = {"/index"},name = "部门首页")
     public String index(HttpServletRequest request, Model model) {
         return "/sys/depmIndex";
     }
@@ -49,9 +49,9 @@ public class DepmController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(method= RequestMethod.POST,value="/getDepartmentList")
+    @RequestMapping(method= RequestMethod.POST,value="/getDepartmentList",name = "获取部门数据")
     public List<Map> getDepartmentList(Integer departmentID){
-        departmentID = 1;
+        //departmentID = 1;
         //获取所有的数据
         List<Map> sysDepartments = sysDepartmentService.selectByPrimaryKeyForList(departmentID);
         return sysDepartments;
@@ -65,7 +65,7 @@ public class DepmController {
      */
     @RequiresPermissions(value={"sys:depm:add", "sys:depm:update"}, logical= Logical.OR)
     @ResponseBody
-    @RequestMapping(method= RequestMethod.POST,value="/save")
+    @RequestMapping(method= RequestMethod.POST,value="/save",name = "添加修改部门")
     public int save(SysDepartment sysDepartment, int flag){
         int count = 0;
         try {
@@ -89,7 +89,7 @@ public class DepmController {
      */
     @RequiresPermissions(value={"sys:depm:delete"})
     @ResponseBody
-    @RequestMapping(method= RequestMethod.POST,value="/delete")
+    @RequestMapping(method= RequestMethod.POST,value="/delete",name = "删除部门")
     public int delete(Integer id){
         int count = 0;
         try {

@@ -102,5 +102,12 @@
     SELECT id FROM sys_department WHERE dep.state = 0 AND id = #{id,jdbcType=INTEGER} or parentID = #{id,jdbcType=INTEGER}
   </select>
 
+  <select id="selectByPrimaryKeyForIdListRange" parameterType="java.lang.String" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List" />
+    FROM sys_department WHERE state = 0
+    ${sql}
+  </select>
+
 
 </mapper>

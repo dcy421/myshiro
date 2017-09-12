@@ -31,22 +31,87 @@ public abstract class BaseService {
         if (sysUser.isAdmin()){
             return "";
         }
-        switch (sysUser.getDatarange()){
-            case SysUser.DATA_SCOPE_ALL://所有数据
-                break;
-            case SysUser.DATA_SCOPE_OFFICE://所在部门数据
-                sqlString.append(" AND "+depAlias+".departmentID = "+sysUser.getDepartmentid()+" ");
-                break;
-            case SysUser.DATA_SCOPE_OFFICE_AND_CHILD://所在部门和直属下级数据
-                sqlString.append(" AND "+depAlias+".departmentID in ("+ UserUtils.getDepIds(sysUser.getDepartmentid())+") ");
-                break;
-            case SysUser.DATA_SCOPE_OFFICE_AND_ALL://所在部门下的所有数据
-                sqlString.append(" AND "+depAlias+".departmentID in ("+ UserUtils.getDepIdsALL(sysUser.getDepartmentid())+") ");
-                break;
-            default:
-                break;
+        if (depAlias != "" && depAlias != null){
+            switch (sysUser.getDatarange()){
+                case SysUser.DATA_SCOPE_ALL://所有数据
+                    break;
+                case SysUser.DATA_SCOPE_OFFICE://所在部门数据
+                    sqlString.append(" AND "+depAlias+".departmentID = "+sysUser.getDepartmentid()+" ");
+                    break;
+                case SysUser.DATA_SCOPE_OFFICE_AND_CHILD://所在部门和直属下级数据
+                    sqlString.append(" AND "+depAlias+".departmentID in ("+ UserUtils.getDepIds(sysUser.getDepartmentid())+") ");
+                    break;
+                case SysUser.DATA_SCOPE_OFFICE_AND_ALL://所在部门下的所有数据
+                    sqlString.append(" AND "+depAlias+".departmentID in ("+ UserUtils.getDepIdsALL(sysUser.getDepartmentid())+") ");
+                    break;
+                default:
+                    break;
+            }
+        }else {
+            switch (sysUser.getDatarange()){
+                case SysUser.DATA_SCOPE_ALL://所有数据
+                    break;
+                case SysUser.DATA_SCOPE_OFFICE://所在部门数据
+                    sqlString.append(" AND  departmentID = "+sysUser.getDepartmentid()+" ");
+                    break;
+                case SysUser.DATA_SCOPE_OFFICE_AND_CHILD://所在部门和直属下级数据
+                    sqlString.append(" AND  departmentID in ("+ UserUtils.getDepIds(sysUser.getDepartmentid())+") ");
+                    break;
+                case SysUser.DATA_SCOPE_OFFICE_AND_ALL://所在部门下的所有数据
+                    sqlString.append(" AND  departmentID in ("+ UserUtils.getDepIdsALL(sysUser.getDepartmentid())+") ");
+                    break;
+                default:
+                    break;
+            }
         }
+        return sqlString.toString();
+    }
 
+    /**
+     * 过滤部门数据
+     * @param sysUser
+     * @param depAlias
+     * @return
+     */
+    public static String dataScopeDepFilter(SysUser sysUser, String depAlias) {
+        StringBuilder sqlString = new StringBuilder();
+        //判断是不是管理员
+        if (sysUser.isAdmin()){
+            return "";
+        }
+        if (depAlias != "" && depAlias != null){
+            switch (sysUser.getDatarange()){
+                case SysUser.DATA_SCOPE_ALL://所有数据
+                    break;
+                case SysUser.DATA_SCOPE_OFFICE://所在部门数据
+                    sqlString.append(" AND "+depAlias+".id = "+sysUser.getDepartmentid()+" ");
+                    break;
+                case SysUser.DATA_SCOPE_OFFICE_AND_CHILD://所在部门和直属下级数据
+                    sqlString.append(" AND "+depAlias+".id in ("+ UserUtils.getDepIds(sysUser.getDepartmentid())+") ");
+                    break;
+                case SysUser.DATA_SCOPE_OFFICE_AND_ALL://所在部门下的所有数据
+                    sqlString.append(" AND "+depAlias+".id in ("+ UserUtils.getDepIdsALL(sysUser.getDepartmentid())+") ");
+                    break;
+                default:
+                    break;
+            }
+        }else {
+            switch (sysUser.getDatarange()){
+                case SysUser.DATA_SCOPE_ALL://所有数据
+                    break;
+                case SysUser.DATA_SCOPE_OFFICE://所在部门数据
+                    sqlString.append(" AND  id = "+sysUser.getDepartmentid()+" ");
+                    break;
+                case SysUser.DATA_SCOPE_OFFICE_AND_CHILD://所在部门和直属下级数据
+                    sqlString.append(" AND  id in ("+ UserUtils.getDepIds(sysUser.getDepartmentid())+") ");
+                    break;
+                case SysUser.DATA_SCOPE_OFFICE_AND_ALL://所在部门下的所有数据
+                    sqlString.append(" AND  id in ("+ UserUtils.getDepIdsALL(sysUser.getDepartmentid())+") ");
+                    break;
+                default:
+                    break;
+            }
+        }
         return sqlString.toString();
     }
 }

@@ -19,7 +19,7 @@
     <div class="row">
         <form class="form-horizontal" id="form-role-update"  onsubmit="return false;">
             <div class="col-md-12">
-                <%--<div class="form-group">
+                <div class="form-group">
                     <label class="col-sm-3 control-label">部门名称</label>
                     <div class="col-sm-7">
                         <select class="form-control ignore" name="departmentid" id="departmentid">
@@ -28,18 +28,18 @@
                             </c:forEach>
                         </select>
                     </div>
-                </div>--%>
+                </div>
                 <div class="form-group">
                     <label class="col-sm-3 control-label">角色名称</label>
                     <div class="col-sm-7">
-                        <input id="name" name="name" class="form-control" type="text" value="${role.name}"></input>
-                        <input id="id" name="id" class="form-control" type="hidden" value="${role.id}"></input>
+                        <input id="name" name="name" class="form-control" type="text" value="${role.name}" disabled/>
+                        <input id="id" name="id" class="form-control" type="hidden" value="${role.id}"/>
                     </div>
                 </div>
                 <div class="form-group">
                     <label class="col-sm-3 control-label">英文名称</label>
                     <div class="col-sm-7">
-                        <input id="enname" name="enname" class="form-control" type="text" value="${role.enname}"></input>
+                        <input id="enname" name="enname" class="form-control" type="text" value="${role.enname}"/>
                     </div>
                 </div>
                 <div class="form-group">

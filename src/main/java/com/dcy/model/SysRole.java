@@ -31,6 +31,14 @@ public class SysRole {
      */
     private String remarks;
 
+
+
+    private String departmentname;
+
+
+
+    private String sql;
+
     /**
      * 主键
      * @return id 主键
@@ -125,5 +133,21 @@ public class SysRole {
      */
     public void setRemarks(String remarks) {
         this.remarks = remarks;
+    }
+
+    public String getDepartmentname() {
+        return departmentname;
+    }
+
+    public void setDepartmentname(String departmentname) {
+        this.departmentname = departmentname;
+    }
+
+    public String getSql() {
+        return sql;
+    }
+
+    public void setSql(String sql) {
+        this.sql = sql;
     }
 }

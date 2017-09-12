@@ -31,16 +31,16 @@
                     </div>
                 </div>
 
-                <%--<div class="form-group">
+                <div class="form-group">
                     <label class="col-sm-3 control-label">部门名称</label>
                     <div class="col-sm-7">
                         <select class="form-control ignore" name="departmentid" id="departmentid">
                             <c:forEach var="c" items="${depList}">
-                                <option value="${c.id}">${c.name}</option>
+                                <option value="${c.id}" <c:if test="${c.id eq user.departmentid}">selected</c:if>>${c.name}</option>
                             </c:forEach>
                         </select>
                     </div>
-                </div>--%>
+                </div>
                 <div class="form-group">
                     <label class="col-sm-3 control-label">用户名</label>
                     <div class="col-sm-7">

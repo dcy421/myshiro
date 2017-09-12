@@ -35,4 +35,11 @@ public interface SysDepartmentService {
      * @mbggenerated
      */
     int updateByPrimaryKeySelective(SysDepartment record);
+
+
+    /**
+     * 根据sql 查询能看到的部门
+     * @return
+     */
+    List<SysDepartment> selectByPrimaryKeyForIdListRange();
 }

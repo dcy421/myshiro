@@ -33,7 +33,7 @@ public class LoginController extends BaseController {
      * 首页
      * @return
      */
-	@RequestMapping("/index")
+	@RequestMapping(method = RequestMethod.GET,value = "/index",name = "首页")
     public String index(){
 		//logger.info("首页");
         return "/index";
@@ -43,7 +43,7 @@ public class LoginController extends BaseController {
      * 权限不足
      * @return
      */
-    @RequestMapping("/unauthorized")
+    @RequestMapping(method = RequestMethod.GET,value = "/unauthorized",name = "权限不足")
     public String unauthorized(){
         //logger.info("权限不足");
         return "/unauthorized";
@@ -52,7 +52,7 @@ public class LoginController extends BaseController {
      * 欢迎页
      * @return
      */
-    @RequestMapping("/welcome")
+    @RequestMapping(method = RequestMethod.GET,value = "/welcome",name = "欢迎页")
     public String welcome(){
         //logger.info("欢迎页");
         return "/welcome";
@@ -62,7 +62,7 @@ public class LoginController extends BaseController {
      * 登陆页面
      * @return
      */
-	@RequestMapping(method=RequestMethod.GET,value = "/login")
+	@RequestMapping(method=RequestMethod.GET,value = "/login",name = "登陆页面")
     public String login(){
 		//logger.info("登陆  Get");
         //如果登陆  直接跳转首页
@@ -80,7 +80,7 @@ public class LoginController extends BaseController {
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping(method=RequestMethod.POST, value = "/login")
+	@RequestMapping(method=RequestMethod.POST, value = "/login",name = "登陆")
 	public String login(HttpServletRequest request,RedirectAttributes attr,Model model) {
 		//logger.info("登陆  Post");
 		//如果登陆失败从request中获取认证异常信息，shiroLoginFailure就是shiro异常类的全限定名

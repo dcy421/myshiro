@@ -4,8 +4,10 @@ import com.dcy.dao.SysRoleMapper;
 import com.dcy.model.BootStrapTable;
 import com.dcy.model.SysRole;
 import com.dcy.model.SysRoleMenu;
+import com.dcy.service.BaseService;
 import com.dcy.service.SysRoleService;
 import com.dcy.shiro.realm.UserRealm;
+import com.dcy.utils.UserUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,7 +19,7 @@ import java.util.List;
  */
 @Service
 @Transactional(rollbackFor = Exception.class)
-public class SysRoleServiceImpl implements SysRoleService {
+public class SysRoleServiceImpl extends BaseService implements SysRoleService {
 
     @Resource
     private SysRoleMapper sysRoleMapper;
@@ -39,10 +41,14 @@ public class SysRoleServiceImpl implements SysRoleService {
     }
 
     public int getRoleCount(SysRole sysRole) {
+        //sql 过滤
+        sysRole.setSql(dataScopeFilter(UserUtils.getUser(), "r"));
         return sysRoleMapper.getRoleCount(sysRole);
     }
 
     public List<SysRole> getRolePageList(BootStrapTable bootStrapTable, SysRole sysRole) {
+        //sql 过滤
+        sysRole.setSql(dataScopeFilter(UserUtils.getUser(), "r"));
         return sysRoleMapper.getRolePageList(bootStrapTable, sysRole);
     }
 

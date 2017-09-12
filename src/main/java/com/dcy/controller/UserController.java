@@ -8,6 +8,7 @@ import com.dcy.config.Global;
 import com.dcy.model.BootStrapTable;
 import com.dcy.model.SysRole;
 import com.dcy.model.SysUserRole;
+import com.dcy.service.SysDepartmentService;
 import com.dcy.service.SysDictService;
 import com.dcy.service.SysRoleService;
 import com.dcy.utils.Common;
@@ -52,6 +53,11 @@ public class UserController extends BaseController {
 	 */
 	@Resource
 	private SysRoleService sysRoleService;
+	/**
+	 * 部门service
+	 */
+	@Resource
+	private SysDepartmentService sysDepartmentService;
 
 
 	/**
@@ -61,7 +67,7 @@ public class UserController extends BaseController {
 	 * @return
 	 */
 	@RequiresPermissions("sys:user:search")
-	@RequestMapping(method= RequestMethod.GET,value = {"/index"})
+	@RequestMapping(method= RequestMethod.GET,value = {"/index"},name = "人员首页")
 	public String index(HttpServletRequest request, Model model) {
 		return "/sys/userIndex";
 	}
@@ -74,7 +80,7 @@ public class UserController extends BaseController {
 	 */
 	@RequiresPermissions("sys:user:search")
 	@ResponseBody
-	@RequestMapping(method= RequestMethod.POST,value={"/getUserPageList"})
+	@RequestMapping(method= RequestMethod.POST,value={"/getUserPageList"},name = "人员分页数据")
 	public Map getUserList(BootStrapTable bootStrapTable, SysUser sysUser){
 		Map map = new HashMap();
 		try {
@@ -93,13 +99,14 @@ public class UserController extends BaseController {
 	 * @return
 	 */
 	@RequiresPermissions("sys:user:add")
-	@RequestMapping(method=RequestMethod.GET,value="/add")
+	@RequestMapping(method=RequestMethod.GET,value="/add",name = "添加用户页面")
 	public String add(HttpServletRequest request,HttpServletResponse response,Model model) {
 		//logger.info("用户添加 Get");
 		try {
 			request.setAttribute("sexList",sysDictService.selectListByType("sex"));
 			request.setAttribute("dataRangeList",sysDictService.selectListByType("data_range"));
 			request.setAttribute("roleList",sysRoleService.selectAll());
+			request.setAttribute("depList",sysDepartmentService.selectByPrimaryKeyForIdListRange());
 		}catch (Exception ex){
 			logger.error("add-=-"+ex.toString());
 		}
@@ -113,7 +120,7 @@ public class UserController extends BaseController {
 	 * @return
 	 */
 	@RequiresPermissions("sys:user:update")
-	@RequestMapping(method=RequestMethod.GET,value="/update")
+	@RequestMapping(method=RequestMethod.GET,value="/update",name = "修改用户页面")
 	public String update(HttpServletRequest request,Integer id) {
 		//logger.info("用户添加 Get");
 		List<SysRole> roleoldList = new ArrayList<SysRole>();
@@ -122,6 +129,7 @@ public class UserController extends BaseController {
 			request.setAttribute("sexList",sysDictService.selectListByType("sex"));
 			request.setAttribute("dataRangeList",sysDictService.selectListByType("data_range"));
 			request.setAttribute("user",sysUserService.selectByPrimaryKey(id));
+			request.setAttribute("depList",sysDepartmentService.selectByPrimaryKeyForIdListRange());
 			List<SysRole> sysRoleList = sysRoleService.selectAll();
 			//返回当前人的权限
 			List<String> strings = sysRoleService.getRoleIdByUserId(id);
@@ -155,7 +163,7 @@ public class UserController extends BaseController {
 	 */
 	@RequiresPermissions(value={"sys:user:add","sys:user:update"},logical= Logical.OR)
 	@ResponseBody
-	@RequestMapping(method=RequestMethod.POST,value="/save")
+	@RequestMapping(method=RequestMethod.POST,value="/save",name = "保存user")
 	public int save(SysUser sysUser,Model model,String flag,@RequestParam(value = "roleids")  Integer[]  roleids) {
 		//logger.info("用户添加 Post");
 		int count = 0;
@@ -205,7 +213,7 @@ public class UserController extends BaseController {
 	 * @return
 	 */
 	@ResponseBody
-	@RequestMapping(method= RequestMethod.POST,value="/getRepeatUserName")
+	@RequestMapping(method= RequestMethod.POST,value="/getRepeatUserName",name = "检测是否有这个账户")
 	public int getRepeatUserName(String userName){
 		int count = 0;
 		try {
@@ -223,7 +231,7 @@ public class UserController extends BaseController {
 	 */
 	@RequiresPermissions("sys:user:delete")
 	@ResponseBody
-	@RequestMapping(method= RequestMethod.POST,value="/delete")
+	@RequestMapping(method= RequestMethod.POST,value="/delete",name = "批量删除用户")
 	public int delete(@RequestParam(value = "ids[]")  Integer[]  ids){
 		int count = 0;
 		try {
@@ -242,7 +250,7 @@ public class UserController extends BaseController {
 	 * @return
 	 */
 	@ResponseBody
-	@RequestMapping("/uploadPicture")
+	@RequestMapping(value = "/uploadPicture",name = "上传头像")
 	public String uploads(@RequestParam("file")MultipartFile files, HttpServletRequest request, HttpServletResponse response) {
 		try {
 			//一个文件

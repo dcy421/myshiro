@@ -81,4 +81,15 @@
         <property name="securityManager" ref="securityManager"/>
     </bean>
 
+    <!-- 日志记录 -->
+    <mvc:interceptors>
+        <mvc:interceptor>
+            <mvc:mapping path="/**"/>
+            <!-- 需排除拦截的地址 -->
+            <mvc:exclude-mapping path="${adminPath}/login" />
+            <mvc:exclude-mapping path="/content" />
+            <bean class="com.dcy.listener.MyInterceptors"></bean>
+        </mvc:interceptor>
+    </mvc:interceptors>
+
 </beans>

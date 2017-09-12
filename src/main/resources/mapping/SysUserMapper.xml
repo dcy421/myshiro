@@ -19,6 +19,7 @@
     <result column="sex" property="sex" jdbcType="INTEGER" />
     <result column="birthday" property="birthday" jdbcType="DATE" />
     <result column="sexName" property="sexname" jdbcType="VARCHAR" />
+    <result column="departmentName" property="departmentname" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
     u.id, u.departmentID, u.username, u.password, u.salt, u.locked, u.name, u.email, u.phone, u.photo, u.dataRange,
@@ -265,8 +266,8 @@
 
   <select id="selectByUserName" resultMap="BaseResultMap" >
     select
-    <include refid="Base_Column_List" />
-    from sys_user u
+    <include refid="Base_Column_List" />,de.name as departmentName
+    from sys_user u INNER JOIN sys_department de on u.departmentID = de.id
     where u.username = #{username,jdbcType=VARCHAR}
   </select>
 
@@ -277,9 +278,10 @@
 
   <select id="getUserPageList" resultMap="BaseResultMap">
     select
-    <include refid="Base_Column_List" />,d.NAME as sexName
+    <include refid="Base_Column_List" />,d.NAME as sexName,de.name as departmentName
     from sys_user u
     INNER JOIN (SELECT d.`code`,d.`name` FROM sys_dict d WHERE d.type = 'sex') d on u.sex = d.`code`
+    INNER JOIN sys_department de on u.departmentID = de.id
     WHERE 1=1
     <include refid="Where_Sql"/>
     ${user.sql}

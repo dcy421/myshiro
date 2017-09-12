@@ -2,7 +2,9 @@ package com.dcy.service.impl;
 
 import com.dcy.dao.SysDepartmentMapper;
 import com.dcy.model.SysDepartment;
+import com.dcy.service.BaseService;
 import com.dcy.service.SysDepartmentService;
+import com.dcy.utils.UserUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,7 +17,7 @@ import java.util.Map;
  */
 @Service
 @Transactional(rollbackFor = Exception.class)
-public class SysDepartmentServiceImpl implements SysDepartmentService {
+public class SysDepartmentServiceImpl extends BaseService implements SysDepartmentService {
 
     @Resource
     private SysDepartmentMapper sysDepartmentMapper;
@@ -35,5 +37,10 @@ public class SysDepartmentServiceImpl implements SysDepartmentService {
 
     public int updateByPrimaryKeySelective(SysDepartment record) {
         return sysDepartmentMapper.updateByPrimaryKeySelective(record);
+    }
+
+    public List<SysDepartment> selectByPrimaryKeyForIdListRange() {
+        String sql = dataScopeDepFilter(UserUtils.getUser(), "");
+        return sysDepartmentMapper.selectByPrimaryKeyForIdListRange(sql);
     }
 }

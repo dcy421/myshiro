@@ -2,9 +2,10 @@ package com.dcy.model;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class SysUser {
+public class SysUser implements Serializable {
     /**
      * 主键
      */
@@ -89,6 +90,9 @@ public class SysUser {
 
 
     private String sexname;
+
+
+    private String departmentname;
 
 
     // 数据范围（0：所有数据；1：所在部门数据；2:所在部门和直属下级数据; 3：所在部门下的所有数据；）
@@ -383,5 +387,14 @@ public class SysUser {
 
     public void setSql(String sql) {
         this.sql = sql;
+    }
+
+
+    public String getDepartmentname() {
+        return departmentname;
+    }
+
+    public void setDepartmentname(String departmentname) {
+        this.departmentname = departmentname;
     }
 }

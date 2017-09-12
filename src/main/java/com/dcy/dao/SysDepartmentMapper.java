@@ -55,4 +55,11 @@ public interface SysDepartmentMapper {
      * @return
      */
     List<Integer> selectByPrimaryKeyForIdList(@Param(value = "id") Integer id);
+
+    /**
+     * 根据sql 查询能看到的部门
+     * @param sql
+     * @return
+     */
+    List<SysDepartment> selectByPrimaryKeyForIdListRange(@Param(value = "sql") String sql);
 }

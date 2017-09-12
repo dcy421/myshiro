@@ -20,7 +20,7 @@
         </sqlMapGenerator>
         <javaClientGenerator targetPackage="com.dcy.dao" targetProject="E:/Test/java/" type="XMLMAPPER" >
         </javaClientGenerator>
-        <table tableName="sys_menu"  enableSelectByExample="false" enableDeleteByExample="false"
+        <table tableName="sys_log"  enableSelectByExample="false" enableDeleteByExample="false"
                enableCountByExample="false" enableUpdateByExample="false"
                selectByExampleQueryId="false">
         </table>
