@@ -63,6 +63,13 @@ public class SysLog {
      */
     private Date date;
 
+
+
+    private String sql;
+
+
+    private String departmentname;
+
     /**
      * 
      * @return id 
@@ -271,4 +278,21 @@ public class SysLog {
 
     public SysLog() {
     }
+
+    public String getSql() {
+        return sql;
+    }
+
+    public void setSql(String sql) {
+        this.sql = sql;
+    }
+
+    public String getDepartmentname() {
+        return departmentname;
+    }
+
+    public void setDepartmentname(String departmentname) {
+        this.departmentname = departmentname;
+    }
+
 }

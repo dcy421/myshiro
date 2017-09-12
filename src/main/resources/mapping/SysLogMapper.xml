@@ -14,11 +14,28 @@
     <result column="ip" property="ip" jdbcType="VARCHAR" />
     <result column="port" property="port" jdbcType="INTEGER" />
     <result column="date" property="date" jdbcType="TIMESTAMP" />
+    <result column="departmentName" property="departmentname" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, username, departmentid, title, controller, method, type, params, requestURI, 
-    ip, port, date
+    l.id, l.username, l.departmentid, l.title, l.controller, l.method, l.type, l.params, l.requestURI,
+    l.ip, l.port, l.date
   </sql>
+
+  <sql id="Where_Sql" >
+    <if test="log.username != null and log.username != ''" >
+      AND l.username like concat('%', #{log.username,jdbcType=VARCHAR}, '%')
+    </if>
+    <if test="log.title != null and log.title != ''" >
+      AND l.title like concat('%', #{log.title,jdbcType=VARCHAR}, '%')
+    </if>
+  </sql>
+
+  <sql id="OrderBy_Sql" >
+    <if test="BST.sort != null and BST.sort != ''" >
+      order by  ${BST.sort} ${BST.order}
+    </if>
+  </sql>
+
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
     <include refid="Base_Column_List" />
@@ -29,16 +46,6 @@
     delete from sys_log
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.dcy.model.SysLog" >
-    insert into sys_log (id, username, departmentid, 
-      title, controller, method, 
-      type, params, requestURI, 
-      ip, port, date)
-    values (#{id,jdbcType=INTEGER}, #{username,jdbcType=VARCHAR}, #{departmentid,jdbcType=INTEGER}, 
-      #{title,jdbcType=VARCHAR}, #{controller,jdbcType=VARCHAR}, #{method,jdbcType=VARCHAR}, 
-      #{type,jdbcType=VARCHAR}, #{params,jdbcType=VARCHAR}, #{requesturi,jdbcType=VARCHAR}, 
-      #{ip,jdbcType=VARCHAR}, #{port,jdbcType=INTEGER}, #{date,jdbcType=TIMESTAMP})
-  </insert>
   <insert id="insertSelective" parameterType="com.dcy.model.SysLog" >
     insert into sys_log
     <trim prefix="(" suffix=")" suffixOverrides="," >
@@ -118,58 +125,22 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.dcy.model.SysLog" >
-    update sys_log
-    <set >
-      <if test="username != null" >
-        username = #{username,jdbcType=VARCHAR},
-      </if>
-      <if test="departmentid != null" >
-        departmentid = #{departmentid,jdbcType=INTEGER},
-      </if>
-      <if test="title != null" >
-        title = #{title,jdbcType=VARCHAR},
-      </if>
-      <if test="controller != null" >
-        controller = #{controller,jdbcType=VARCHAR},
-      </if>
-      <if test="method != null" >
-        method = #{method,jdbcType=VARCHAR},
-      </if>
-      <if test="type != null" >
-        type = #{type,jdbcType=VARCHAR},
-      </if>
-      <if test="params != null" >
-        params = #{params,jdbcType=VARCHAR},
-      </if>
-      <if test="requesturi != null" >
-        requestURI = #{requesturi,jdbcType=VARCHAR},
-      </if>
-      <if test="ip != null" >
-        ip = #{ip,jdbcType=VARCHAR},
-      </if>
-      <if test="port != null" >
-        port = #{port,jdbcType=INTEGER},
-      </if>
-      <if test="date != null" >
-        date = #{date,jdbcType=TIMESTAMP},
-      </if>
-    </set>
-    where id = #{id,jdbcType=INTEGER}
-  </update>
-  <update id="updateByPrimaryKey" parameterType="com.dcy.model.SysLog" >
-    update sys_log
-    set username = #{username,jdbcType=VARCHAR},
-      departmentid = #{departmentid,jdbcType=INTEGER},
-      title = #{title,jdbcType=VARCHAR},
-      controller = #{controller,jdbcType=VARCHAR},
-      method = #{method,jdbcType=VARCHAR},
-      type = #{type,jdbcType=VARCHAR},
-      params = #{params,jdbcType=VARCHAR},
-      requestURI = #{requesturi,jdbcType=VARCHAR},
-      ip = #{ip,jdbcType=VARCHAR},
-      port = #{port,jdbcType=INTEGER},
-      date = #{date,jdbcType=TIMESTAMP}
-    where id = #{id,jdbcType=INTEGER}
-  </update>
+
+  <select id="getLogCount" resultType="java.lang.Integer">
+    SELECT COUNT(l.ID) as count  from sys_log l WHERE 1=1
+    <include refid="Where_Sql"/>
+  </select>
+
+  <select id="getLogPageList" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />,de.name as departmentName
+    from sys_log l
+    INNER JOIN sys_department de on l.departmentid = de.id
+    WHERE 1=1
+    <include refid="Where_Sql"/>
+    ${log.sql}
+    <include refid="OrderBy_Sql"/>
+    LIMIT #{BST.offset},#{BST.limit}
+  </select>
+
 </mapper>

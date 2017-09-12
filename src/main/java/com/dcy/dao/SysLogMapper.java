@@ -1,6 +1,10 @@
 package com.dcy.dao;
 
+import com.dcy.model.BootStrapTable;
 import com.dcy.model.SysLog;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 public interface SysLogMapper {
     /**
@@ -8,12 +12,6 @@ public interface SysLogMapper {
      * @mbggenerated
      */
     int deleteByPrimaryKey(Integer id);
-
-    /**
-     *
-     * @mbggenerated
-     */
-    int insert(SysLog record);
 
     /**
      *
@@ -28,14 +26,17 @@ public interface SysLogMapper {
     SysLog selectByPrimaryKey(Integer id);
 
     /**
-     *
-     * @mbggenerated
+     * 获取一共有多少条数据
+     * @param sysLog
+     * @return
      */
-    int updateByPrimaryKeySelective(SysLog record);
+    int getLogCount(@Param(value = "log") SysLog sysLog);
 
     /**
-     *
-     * @mbggenerated
+     * 分页
+     * @param bootStrapTable
+     * @param sysLog
+     * @return
      */
-    int updateByPrimaryKey(SysLog record);
+    List<SysLog> getLogPageList(@Param(value = "BST") BootStrapTable bootStrapTable, @Param(value = "log") SysLog sysLog);
 }

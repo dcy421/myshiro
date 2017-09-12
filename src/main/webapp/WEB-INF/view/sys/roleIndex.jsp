@@ -38,6 +38,7 @@
                             <div class="form-group">
                                 <label for="name">角色名称</label>
                                 <input type="text" class="form-control" id="name" placeholder="角色名称">
+                                <input id="hiddenText" type="text" style="display:none" /><%-- 隐藏的  控制回车提交表单--%>
                             </div>
                             <shiro:hasPermission name="sys:role:search">
                                 <button type="button" id="btn_query" class="btn btn-success"><i class="fa fa-search"></i>&nbsp;查询</button>
@@ -193,7 +194,8 @@
             }
         });
 
-        $("body").keydown(function() {
+        /* input 获取焦点 才能触发 刷新事件*/
+        $("input").keydown(function() {
             if (event.keyCode == "13") {//keyCode=13是回车键
                 if ($query.length > 0){
                     $table.bootstrapTable('refresh');	//从新加载数据
