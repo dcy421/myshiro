@@ -10,6 +10,8 @@
 
     <description>Activiti Configuration</description>
 
+    <bean id="uuidGenerator" class="org.activiti.engine.impl.persistence.StrongUuidGenerator"/>
+
     <!-- Activiti begin -->
     <bean id="processEngineConfiguration" class="org.activiti.spring.SpringProcessEngineConfiguration">
         <property name="dataSource" ref="dataSource" />
@@ -18,6 +20,7 @@
         <property name="databaseSchemaUpdate" value="true" /><!-- 自动建表，自动更新表结构 -->
         <property name="jobExecutorActivate" value="true" /><!-- 该参数将启用定时相关的功能 -->
         <property name="history" value="full" /><!-- 历史记录保存模式 -->
+        <property name="idGenerator" ref="uuidGenerator"/><!--主键生成策略 uuid-->
         <!-- 生成流程图的字体 -->
         <property name="activityFontName" value="宋体"/>
         <property name="labelFontName" value="宋体"/>
