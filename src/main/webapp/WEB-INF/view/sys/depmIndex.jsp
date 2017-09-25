@@ -230,7 +230,7 @@
             url : "${ctx}/sys/depm/getDepartmentList",
             type: "Post",
             dataType : "json",
-            data :{departmentID:$("#departmentid").val()},
+            data :{departmentID:'${fns:getUser().departmentid}'},
             //async: false,
             success : function(result) {
                 treeObj = $.fn.zTree.init($("#treeDemo"), setting, result);
