@@ -73,6 +73,13 @@ public interface SysRoleService {
     int deleteByids(Integer[] ids);
 
     /**
+     * 根据id删除
+     * @param id
+     * @return
+     */
+    int deleyeById(Integer id);
+
+    /**
      * 根据roleid 查询有哪些菜单
      * @param roleId
      * @return

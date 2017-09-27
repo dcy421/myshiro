@@ -12,6 +12,7 @@ import org.activiti.engine.RepositoryService;
 import org.activiti.engine.repository.Deployment;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.apache.log4j.Logger;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -49,12 +50,14 @@ public class WorkflowController extends BaseController {
     @Resource
     private ActTaskService actTaskService;
 
+
+    @RequiresPermissions("sys:deploy:search")
     @RequestMapping(method= RequestMethod.GET,value = {"/index"},name = "工作流部署首页")
     public String index(HttpServletRequest request, Model model) {
         return "/act/workflowIndex";
     }
 
-
+    @RequiresPermissions("sys:deploy:add")
     @RequestMapping(method= RequestMethod.GET,value = {"/add"},name = "工作流部署添加")
     public String add(HttpServletRequest request, Model model) {
         return "/act/deploymentAdd";
@@ -64,6 +67,7 @@ public class WorkflowController extends BaseController {
      *  分页数据
      * @return
      */
+    @RequiresPermissions("sys:deploy:search")
     @ResponseBody
     @RequestMapping(method= RequestMethod.POST,value={"/getDeploymentList"},name = "工作流部署分页数据")
     public String getDeploymentList(BootStrapTable bootStrapTable,HttpServletResponse response, String deploymentName){
@@ -89,8 +93,16 @@ public class WorkflowController extends BaseController {
         return null;
     }
 
+    /**
+     * 批量删除
+     * @param request
+     * @param model
+     * @param deploymentIds
+     * @return
+     */
+    @RequiresPermissions("sys:deploy:delete")
     @ResponseBody
-    @RequestMapping(method= RequestMethod.POST,value = {"/delete"},name = "工作流部署删除")
+    @RequestMapping(method= RequestMethod.POST,value = {"/batchDelete"},name = "工作流部署删除")
     public int deleteDeployment(HttpServletRequest request, Model model,@RequestParam(value = "ids[]")  String[] deploymentIds) {
         for (int i = 0;i<deploymentIds.length;i++){
             actProcessService.deleteDeployment(deploymentIds[i]);
@@ -98,6 +110,20 @@ public class WorkflowController extends BaseController {
         return 1;
     }
 
+    /**
+     * 删除
+     * @param request
+     * @param model
+     * @param deploymentId
+     * @return
+     */
+    @RequiresPermissions("sys:deploy:delete")
+    @ResponseBody
+    @RequestMapping(method= RequestMethod.POST,value = {"/delete"},name = "工作流部署删除")
+    public int deleteDeployment(HttpServletRequest request, Model model,@RequestParam(value = "id")  String deploymentId) {
+        actProcessService.deleteDeployment(deploymentId);
+        return 1;
+    }
 
     /**
      * 上传流程部署文件
@@ -116,13 +142,15 @@ public class WorkflowController extends BaseController {
         return 1;
     }
 
+    //////////////////////////////////////////////////////////流程部门/////////////////////////////////////////////////////////////////////
 
+    @RequiresPermissions("sys:procdef:search")
     @RequestMapping(method= RequestMethod.GET,value = {"/proindex"},name = "工作流流程首页")
     public String processDefinitionIndex(HttpServletRequest request, Model model) {
         return "/act/processDefinitionIndex";
     }
 
-
+    @RequiresPermissions("sys:procdef:search")
     @ResponseBody
     @RequestMapping(method= RequestMethod.POST,value={"/getProcessDeList"},name = "工作流部署分页数据")
     public String getProcessDeList(BootStrapTable bootStrapTable,HttpServletResponse response,String processName){

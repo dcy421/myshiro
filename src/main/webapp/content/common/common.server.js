@@ -13,7 +13,7 @@ $.extend($.fn.bootstrapTable.defaults,{
     pageSize:30,//设置分页条数
     striped : true, // 是否显示行间隔色
     contentType: "application/x-www-form-urlencoded",
-    clickToSelect: true,//是否启用点击选中行
+    //clickToSelect: true,//是否启用点击选中行
     //showToggle:true,//是否显示详细视图和列表视图的切换按钮
     cache : false, // 是否使用缓存
     //pageList : [ 20,30, 50],

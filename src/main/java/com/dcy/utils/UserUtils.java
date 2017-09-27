@@ -1,5 +1,6 @@
 package com.dcy.utils;
 
+import com.dcy.config.Global;
 import com.dcy.dao.SysDepartmentMapper;
 import com.dcy.dao.SysMenuMapper;
 import com.dcy.dao.SysRoleMapper;
@@ -66,14 +67,19 @@ public class UserUtils {
      * @return 取不到返回null
      */
     public static SysUser getByLoginName(String loginName){
-        SysUser sysUser = (SysUser)CacheUtils.get(USER_CACHE, USER_CACHE_LOGIN_NAME_ + loginName);
+        SysUser sysUser = (SysUser) getCache(Global.LOGINUSER);
         if (sysUser == null){
-            sysUser = sysUserMapper.selectByUserName(loginName);
+            sysUser = (SysUser)CacheUtils.get(USER_CACHE, USER_CACHE_LOGIN_NAME_ + loginName);
             if (sysUser == null){
-                return null;
+                sysUser = sysUserMapper.selectByUserName(loginName);
+                //存session
+                putCache(Global.LOGINUSER,sysUser);
+                if (sysUser == null){
+                    return null;
+                }
+                CacheUtils.put(USER_CACHE, USER_CACHE_ID_ + sysUser.getId(), sysUser);
+                CacheUtils.put(USER_CACHE, USER_CACHE_LOGIN_NAME_ + sysUser.getUsername(), sysUser);
             }
-            CacheUtils.put(USER_CACHE, USER_CACHE_ID_ + sysUser.getId(), sysUser);
-            CacheUtils.put(USER_CACHE, USER_CACHE_LOGIN_NAME_ + sysUser.getUsername(), sysUser);
         }
         return sysUser;
     }

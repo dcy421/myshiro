@@ -37,7 +37,9 @@
                                 <input type="text" class="form-control" id="processName" placeholder="流程定义名称">
                                 <input id="hiddenText" type="text" style="display:none" /><%-- 隐藏的  控制回车提交表单--%>
                             </div>
-                            <button type="button" id="btn_query" class="btn btn-success"><i class="fa fa-search"></i>&nbsp;查询</button>
+                            <shiro:hasPermission name="sys:procdef:search">
+                                <button type="button" id="btn_query" class="btn btn-success"><i class="fa fa-search"></i>&nbsp;查询</button>
+                            </shiro:hasPermission>
                             <button type="reset" id="btn_reset" class="btn btn-primary"><i class="fa fa-undo"></i>&nbsp;重置</button>
                         </form>
                     </div>
@@ -119,10 +121,6 @@
             onLoadSuccess: function(){  //加载成功时执行
                 //layer.msg("加载成功");
                 //$('#empUserList').bootstrapTable("refresh");
-                //默认最小
-                $('.switch input').bootstrapSwitch({
-                    size:"mini"
-                });
             },
             onLoadError: function(){  //加载失败时执行
                 layer.msg("加载数据失败", {time : 1500, icon : 2});

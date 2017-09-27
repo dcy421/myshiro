@@ -54,14 +54,9 @@
                             <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>新增
                         </button>
                     </shiro:hasPermission>
-                    <shiro:hasPermission name="sys:role:update">
-                        <button id="btn_edit" type="button" class="btn btn-default" disabled>
-                            <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>修改
-                        </button>
-                    </shiro:hasPermission>
                     <shiro:hasPermission name="sys:role:delete">
                         <button id="btn_delete" type="button" class="btn btn-default" disabled>
-                            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>删除
+                            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>批量删除
                         </button>
                     </shiro:hasPermission>
                 </div>
@@ -83,9 +78,15 @@
     var $table = $('#empUserList'),
         $query = $('#btn_query'),
         $remove = $('#btn_delete'),
-        $edit = $('#btn_edit'),
         $add = $('#btn_add'),
-        selections = [];
+        selections = [],
+        permissionButton=[
+            '<shiro:hasPermission name="sys:role:update"><a class="btn btn-icon-only"  data-type="edit" href="javascript:void(0)" title="修改">',
+            '<i class="glyphicon glyphicon-edit"></i></a></shiro:hasPermission>',
+            '<shiro:hasPermission name="sys:role:delete"><a class="btn btn-icon-only" data-type="delete" href="javascript:void(0)" title="删除">',
+            '<i class="glyphicon glyphicon-remove"></i></a></shiro:hasPermission>'
+        ].join('');//权限按钮
+
     $(function() {
         $table.bootstrapTable({
             url : '${ctx}/sys/role/getRolePageList',
@@ -122,7 +123,15 @@
                 valign : 'middle',
                 sortable : true,
                 formatter :operateFormatter
-            } ],
+            } ,{
+                title : '操作',
+                field : 'id',
+                align : 'center',
+                valign : 'middle',
+                sortable : true,
+                formatter :actionFormatter,
+                events:actionEvents
+            }],
             onLoadSuccess: function(){  //加载成功时执行
                 //layer.msg("加载成功");
                 //$('#empUserList').bootstrapTable("refresh");
@@ -151,7 +160,6 @@
         $table.on('check.bs.table uncheck.bs.table ' +
             'check-all.bs.table uncheck-all.bs.table', function () {
             $remove.prop('disabled', !$table.bootstrapTable('getSelections').length);
-            $edit.prop('disabled', !$table.bootstrapTable('getSelections').length);
             // save your data, here just save the current page
             selections = getIdSelections();
         });
@@ -161,23 +169,15 @@
         $add.click(function () {
             layer_show("角色添加","${ctx}/sys/role/add","800","600");
         });
-        $edit.click(function () {
-            if (selections.length != 1) {
-                $.fn.modalAlert('请选择一条数据进行编辑！','error');
-                return false;
-            } else {
-                layer_show("角色修改","${ctx}/sys/role/update?id="+selections[0],"800","600");
-            }
-        });
         $remove.click(function () {
-            console.log(selections.length);
+            //console.log(selections.length);
             if (selections.length < 1) {
                 $.fn.modalAlert('请选择一条或多条数据进行删除！','error');
             } else {
                 //询问框
                 $.fn.modalConfirm ('确定要删除所选数据？', function () {
                     $.ajax({
-                        url:'${ctx}/sys/role/delete',
+                        url:'${ctx}/sys/role/batchDelete',
                         type: "Post",
                         data:{ids:selections},
                         dataType : "json",
@@ -187,6 +187,7 @@
                             }else {
                                 $.fn.modalMsg("操作失败","error");
                             }
+                            $remove.prop('disabled', true);
                             $table.bootstrapTable('refresh');	//从新加载数据
                         }
                     });
@@ -221,6 +222,33 @@
         });
     });
 
+    function actionFormatter(value, row, index) {
+        return permissionButton;
+    }
+    window.actionEvents = {
+        'click [data-type="edit"]': function (e, value, row) {
+            layer_show("角色修改","${ctx}/sys/role/update?id="+value,"800","600");
+        },
+        'click [data-type="delete"]': function (e, value, row) {
+            //询问框
+            $.fn.modalConfirm ('确定要删除所选数据？', function () {
+                $.ajax({
+                    url:'${ctx}/sys/role/delete',
+                    type: "Post",
+                    data:{id:value},
+                    dataType : "json",
+                    success:function(result){
+                        if(result > 0){
+                            $.fn.modalMsg("操作成功","success");
+                        }else {
+                            $.fn.modalMsg("操作失败","error");
+                        }
+                        $table.bootstrapTable('refresh');	//从新加载数据
+                    }
+                });
+            });
+        }
+    };
 
     function operateFormatter(value, row, index) {
         //console.log(value);

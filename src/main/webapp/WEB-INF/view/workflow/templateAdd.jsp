@@ -34,7 +34,7 @@
                 <div class="form-group">
                     <label class="col-sm-3 control-label">描述</label>
                     <div class="col-sm-7">
-                        <textarea id="description" name="description" class="form-control" style="width:300px;height: 50px;"></textarea>
+                        <textarea id="description" name="description" class="form-control" ></textarea>
                     </div>
                 </div>
 

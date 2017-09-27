@@ -124,23 +124,14 @@ public class RoleController {
     @RequestMapping(method= RequestMethod.POST,value="/save",name = "角色添加修改操作")
     public int SaveSysRole(SysRole sysRole,String flag,@RequestParam(value = "ids")  Integer[]  ids){
         int count = 0;
-        List<SysRoleMenu> sysRoleMenuList = new ArrayList<SysRoleMenu>();
         try {
 
             if ("add".equalsIgnoreCase(flag)) {
                 //添加角色表 返回主键
                 count =sysRoleService.insertSelective(sysRole);
                 if (count > 0){
-                    for (int i = 0; i < ids.length; i++) {
-                        SysRoleMenu sysRoleMenu = new SysRoleMenu();
-                        sysRoleMenu.setRoleId(sysRole.getId());//取出主键自增之后的值
-                        sysRoleMenu.setMenuId(ids[i]);//循环添加对象
-                        sysRoleMenuList.add(sysRoleMenu);
-                    }
-                    if (sysRoleMenuList.size() > 0){
-                        //添加角色和菜单的关联表
-                        sysRoleService.insertRoleMenuBatch(sysRoleMenuList);
-                    }
+                    //根据 roleID 和 menuIDs 添加
+                    insertRoleMentBatch(sysRole.getId(),ids);
                 }
             }else if ("update".equalsIgnoreCase(flag)){
                 //修改
@@ -148,16 +139,8 @@ public class RoleController {
                 if (count > 0){
                     //先删除role_menu的表数据
                     sysRoleService.deleteRoleMenu(sysRole.getId());
-                    for (int i = 0; i < ids.length; i++) {
-                        SysRoleMenu sysRoleMenu = new SysRoleMenu();
-                        sysRoleMenu.setRoleId(sysRole.getId());//取出主键
-                        sysRoleMenu.setMenuId(ids[i]);//循环添加对象
-                        sysRoleMenuList.add(sysRoleMenu);
-                    }
-                    if (sysRoleMenuList.size() > 0){
-                        //添加角色和菜单的关联表
-                        sysRoleService.insertRoleMenuBatch(sysRoleMenuList);
-                    }
+                    //根据 roleID 和 menuIDs 添加
+                    insertRoleMentBatch(sysRole.getId(),ids);
                 }
             }else {
                 //只修改 是否启动
@@ -169,6 +152,24 @@ public class RoleController {
         return count;
     }
 
+    /**
+     * 根据 roleID 和 menuIDs 添加
+     * @param roleID
+     * @param ids
+     */
+    public void insertRoleMentBatch(Integer roleID,Integer[] ids){
+        List<SysRoleMenu> sysRoleMenuList = new ArrayList<SysRoleMenu>();
+        for (int i = 0; i < ids.length; i++) {
+            SysRoleMenu sysRoleMenu = new SysRoleMenu();
+            sysRoleMenu.setRoleId(roleID);//取出主键
+            sysRoleMenu.setMenuId(ids[i]);//循环添加对象
+            sysRoleMenuList.add(sysRoleMenu);
+        }
+        if (sysRoleMenuList.size() > 0){
+            //添加角色和菜单的关联表
+            sysRoleService.insertRoleMenuBatch(sysRoleMenuList);
+        }
+    }
 
     /**
      * 根据id查询对象
@@ -192,20 +193,41 @@ public class RoleController {
     }
 
     /**
-     * 删除role
+     * 批量删除role
      * @param ids
      * @return
      */
     @RequiresPermissions("sys:role:delete")
     @ResponseBody
-    @RequestMapping(method= RequestMethod.POST,value="/delete",name = "删除角色")
+    @RequestMapping(method= RequestMethod.POST,value="/batchDelete",name = "批量删除角色")
     public int delete(@RequestParam(value = "ids[]")  Integer[]  ids){
         int count = 0;
         try {
             //级联删除   删除sys_role表的同时  也删除sys_role_menu 的表数据
             count = sysRoleService.deleteByids(ids);
         }catch (Exception e){
-            logger.error("DelSysRole-=-:"+e.toString());
+            logger.error("delete-=-:"+e.toString());
+        }
+        return count;
+    }
+
+
+
+    /**
+     * 删除role
+     * @param id
+     * @return
+     */
+    @RequiresPermissions("sys:role:delete")
+    @ResponseBody
+    @RequestMapping(method= RequestMethod.POST,value="/delete",name = "删除角色")
+    public int delete(@RequestParam(value = "id")  Integer  id){
+        int count = 0;
+        try {
+            //级联删除   删除sys_role表的同时  也删除sys_role_menu 的表数据
+            count = sysRoleService.deleyeById(id);
+        }catch (Exception e){
+            logger.error("delete-=-:"+e.toString());
         }
         return count;
     }

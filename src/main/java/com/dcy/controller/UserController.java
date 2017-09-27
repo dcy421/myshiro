@@ -231,11 +231,24 @@ public class UserController extends BaseController {
 	 */
 	@RequiresPermissions("sys:user:delete")
 	@ResponseBody
-	@RequestMapping(method= RequestMethod.POST,value="/delete",name = "批量删除用户")
+	@RequestMapping(method= RequestMethod.POST,value="/batchDelete",name = "批量删除用户")
 	public int delete(@RequestParam(value = "ids[]")  Integer[]  ids){
 		int count = 0;
 		try {
 			count =sysUserService.deleteByIds(ids);
+		}catch (Exception e){
+			logger.error("delete-=-:"+e.toString());
+		}
+		return count;
+	}
+
+	@RequiresPermissions("sys:user:delete")
+	@ResponseBody
+	@RequestMapping(method= RequestMethod.POST,value="/delete",name = "删除用户")
+	public int delete(@RequestParam(value = "id")  Integer  id){
+		int count = 0;
+		try {
+			count =sysUserService.deleteByPrimaryKey(id);
 		}catch (Exception e){
 			logger.error("delete-=-:"+e.toString());
 		}

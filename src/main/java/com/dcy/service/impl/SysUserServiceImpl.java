@@ -2,6 +2,7 @@ package com.dcy.service.impl;
 
 import javax.annotation.Resource;
 
+import com.dcy.config.Global;
 import com.dcy.model.BootStrapTable;
 import com.dcy.model.SysUserRole;
 import com.dcy.service.BaseService;
@@ -59,7 +60,13 @@ public class SysUserServiceImpl extends BaseService implements SysUserService {
 		userRealm.clearAllCache();
 		// 清除用户缓存
 		UserUtils.clearCache(record);
-		return sysUserMapper.updateByPrimaryKeySelective(record);
+		int success = sysUserMapper.updateByPrimaryKeySelective(record);
+		//如果成功之后 更新session里面的对象
+		if (success > 0){
+			//更新对象
+			UserUtils.putCache(Global.LOGINUSER,record);
+		}
+		return success;
 	}
 
 	public int getUserCount(SysUser sysUser) {

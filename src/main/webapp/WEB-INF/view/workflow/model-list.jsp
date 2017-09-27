@@ -36,7 +36,7 @@
 								<input type="text" class="form-control" id="name" placeholder="角色名称">
 								<input id="hiddenText" type="text" style="display:none" /><%-- 隐藏的  控制回车提交表单--%>
 							</div>
-							<shiro:hasPermission name="sys:role:search">
+							<shiro:hasPermission name="sys:model:search">
 								<button type="button" id="btn_query" class="btn btn-success"><i class="fa fa-search"></i>&nbsp;查询</button>
 							</shiro:hasPermission>
 							<button type="reset" id="btn_reset" class="btn btn-primary"><i class="fa fa-undo"></i>&nbsp;重置</button>
@@ -45,15 +45,16 @@
 				</div>
 
 				<div id="toolbar" class="btn-group">
-					<button id="btn_add" type="button" class="btn btn-default">
-						<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>创建
-					</button>
-					<button id="btn_edit" type="button" class="btn btn-default" disabled>
-						<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>修改
-					</button>
-					<button id="btn_delete" type="button" class="btn btn-default" disabled>
-						<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>删除
-					</button>
+					<shiro:hasPermission name="sys:model:add">
+						<button id="btn_add" type="button" class="btn btn-default">
+							<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>创建
+						</button>
+					</shiro:hasPermission>
+					<shiro:hasPermission name="sys:model:delete">
+						<button id="btn_delete" type="button" class="btn btn-default" disabled>
+							<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>批量删除
+						</button>
+					</shiro:hasPermission>
 				</div>
 				<div class="table-scrollable">
 					<table class="table-striped table-hover table-bordered"  id="empUserList">
@@ -74,9 +75,12 @@
     var $table = $('#empUserList'),
         $query = $('#btn_query'),
         $remove = $('#btn_delete'),
-        $edit = $('#btn_edit'),
         $add = $('#btn_add'),
-        selections = [];
+        selections = [],
+		updateCount = <shiro:hasPermission name="sys:model:update">true</shiro:hasPermission>,
+        deleteCount = <shiro:hasPermission name="sys:model:delete">true</shiro:hasPermission>,
+    	deployCount =<shiro:hasPermission name="sys:model:deploy">true</shiro:hasPermission>,
+    	exportCount = <shiro:hasPermission name="sys:model:export">true</shiro:hasPermission>;//权限按钮
     $(function() {
         $table.bootstrapTable({
             url : '${ctx}/workflow/model/getModelList',
@@ -101,13 +105,13 @@
                 valign : 'middle', //
                 sortable : true
             },{
-                title : 'Name',
+                title : '名称',
                 field : 'name', // 字段
                 align : 'center', // 对齐方式（左 中 右）
                 valign : 'middle', //
                 sortable : true
             },{
-                title : 'Version',
+                title : '版本',
                 field : 'version',
                 align : 'center',
                 valign : 'middle',
@@ -139,14 +143,12 @@
                 valign : 'middle',
                 sortable : true,
                 formatter :operationFormatter
+                /*formatter :actionFormatter,
+                events:actionEvents*/
             } ],
             onLoadSuccess: function(){  //加载成功时执行
                 //layer.msg("加载成功");
                 //$('#empUserList').bootstrapTable("refresh");
-                //默认最小
-                $('.switch input').bootstrapSwitch({
-                    size:"mini"
-                });
             },
             onLoadError: function(){  //加载失败时执行
                 layer.msg("加载数据失败", {time : 1500, icon : 2});
@@ -168,7 +170,6 @@
         $table.on('check.bs.table uncheck.bs.table ' +
             'check-all.bs.table uncheck-all.bs.table', function () {
             $remove.prop('disabled', !$table.bootstrapTable('getSelections').length);
-            $edit.prop('disabled', !$table.bootstrapTable('getSelections').length);
             // save your data, here just save the current page
             selections = getIdSelections();
         });
@@ -176,25 +177,16 @@
             $table.bootstrapTable('refresh');	//从新加载数据
         });
         $add.click(function () {
-            layer_show("模板添加","${ctx}/workflow/model/add","800","600");
-        });
-        $edit.click(function () {
-            if (selections.length != 1) {
-                $.fn.modalAlert('请选择一条数据进行编辑！','error');
-                return false;
-            } else {
-                window.open("${pageContext.request.contextPath}/process-editor/modeler.jsp?modelId="+selections[0]);
-            }
+            layer_show("模板添加","${ctx}/workflow/model/add","500","400");
         });
         $remove.click(function () {
-            console.log(selections.length);
             if (selections.length < 1) {
                 $.fn.modalAlert('请选择一条或多条数据进行删除！','error');
             } else {
                 //询问框
                 $.fn.modalConfirm ('确定要删除所选数据？', function () {
                     $.ajax({
-                        url:'${ctx}/workflow/model/delete',
+                        url:'${ctx}/workflow/model/batchDelete',
                         type: "Post",
                         data:{ids:selections},
                         dataType : "json",
@@ -204,6 +196,7 @@
                             }else {
                                 $.fn.modalMsg("操作失败","error");
                             }
+                            $remove.prop('disabled', true);
                             $table.bootstrapTable('refresh');	//从新加载数据
                         }
                     });
@@ -238,12 +231,27 @@
     function operationFormatter(value, row, index) {
         var str = "";
         if (value != "" && value != null){
-            str = "<a href='javascript:void(0)' onclick='deploy(\""+value+"\")'>部署</a>&nbsp;&nbsp;||&nbsp;&nbsp;" +
-				"<a href='javascript:void(0)' onclick='exportxml(\""+value+"\")'>导出bpmn</a>&nbsp;&nbsp;||&nbsp;&nbsp;" +
-				"<a href='javascript:void(0)' onclick='exportjson(\""+value+"\")'>导出json</a>";
+            if (updateCount){//修改
+				str += '<a class="btn btn-icon-only"  onclick="update(&quot;'+value+'&quot;)" href="javascript:void(0)" title="修改"> <i class="glyphicon glyphicon-edit"></i></a>';
+			}
+			if (deleteCount){//删除
+                str += '<a class="btn btn-icon-only"  onclick="deleteModel(&quot;'+value+'&quot;)" href="javascript:void(0)" title="删除"> <i class="glyphicon glyphicon-remove"></i></a>';
+			}
+			if (deployCount){//部署
+                str += '<a class="btn btn-icon-only"  onclick="deploy(&quot;'+value+'&quot;)" href="javascript:void(0)" title="部署"> <i class="glyphicon glyphicon-log-out"></i></a>';
+			}
+			if (exportCount){//导出
+                str += '<a class="btn btn-icon-only"  onclick="exportxml(&quot;'+value+'&quot;)" href="javascript:void(0)" title="导出bpmn"> <i class="glyphicon glyphicon-export"></i></a>';
+                str += '<a class="btn btn-icon-only"  onclick="exportjson(&quot;'+value+'&quot;)" href="javascript:void(0)" title="导出json"> <i class="glyphicon glyphicon-export"></i></a>';
+			}
 		}
         return str;
     }
+
+    function update(id) {
+        window.open("${pageContext.request.contextPath}/process-editor/modeler.jsp?modelId="+id);
+    }
+
     function deploy(id) {
         $.post("${ctx}/workflow/model/deploy",{modelId:id},function(result){
             if (result["code"] == "success"){
@@ -252,6 +260,24 @@
                 $.fn.modalMsg("部署失败","error");
 			}
             $table.bootstrapTable('refresh');	//从新加载数据
+        });
+    }
+    function deleteModel(value) {
+        $.fn.modalConfirm ('确定要删除该数据？', function () {
+            $.ajax({
+                url:'${ctx}/workflow/model/delete',
+                type: "Post",
+                data:{id:value},
+                dataType : "json",
+                success:function(result){
+                    if(result > 0){
+                        $.fn.modalMsg("操作成功","success");
+                    }else {
+                        $.fn.modalMsg("操作失败","error");
+                    }
+                    $table.bootstrapTable('refresh');	//从新加载数据
+                }
+            });
         });
     }
     function exportxml(id) {

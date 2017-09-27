@@ -18,6 +18,7 @@ public class Global {
 
     public static final String FILEUPDATE = "data";
     public static final String USER = "user";
+    public static final String LOGINUSER = "loginUser";
 
     /**
      * 当前对象实例

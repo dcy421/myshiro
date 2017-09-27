@@ -37,19 +37,25 @@
                                 <input type="text" class="form-control" id="deploymentName" placeholder="流程名称">
                                 <input id="hiddenText" type="text" style="display:none" /><%-- 隐藏的  控制回车提交表单--%>
                             </div>
-                            <button type="button" id="btn_query" class="btn btn-success"><i class="fa fa-search"></i>&nbsp;查询</button>
+                            <shiro:hasPermission name="sys:deploy:search">
+                                <button type="button" id="btn_query" class="btn btn-success"><i class="fa fa-search"></i>&nbsp;查询</button>
+                            </shiro:hasPermission>
                             <button type="reset" id="btn_reset" class="btn btn-primary"><i class="fa fa-undo"></i>&nbsp;重置</button>
                         </form>
                     </div>
                 </div>
 
                 <div id="toolbar" class="btn-group">
-                    <button id="btn_add" type="button" class="btn btn-default">
-                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>新增
-                    </button>
-                    <button id="btn_delete" type="button" class="btn btn-default" disabled>
-                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>删除
-                    </button>
+                    <shiro:hasPermission name="sys:deploy:add">
+                        <button id="btn_add" type="button" class="btn btn-default">
+                            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>新增
+                        </button>
+                    </shiro:hasPermission>
+                    <shiro:hasPermission name="sys:deploy:delete">
+                        <button id="btn_delete" type="button" class="btn btn-default" disabled>
+                            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>批量删除
+                        </button>
+                    </shiro:hasPermission>
                 </div>
                 <div class="table-scrollable">
                     <table class="table-striped table-hover table-bordered"  id="empUserList">
@@ -70,7 +76,8 @@
         $query = $('#btn_query'),
         $remove = $('#btn_delete'),
         $add = $('#btn_add'),
-        selections = [];
+        selections = [],
+        deleteCount = <shiro:hasPermission name="sys:deploy:delete">true</shiro:hasPermission>;
     $(function() {
         $table.bootstrapTable({
             url : '${ctx}/sys/workf/getDeploymentList',
@@ -101,6 +108,13 @@
                 align : 'center', // 对齐方式（左 中 右）
                 valign : 'middle', //
                 sortable : true
+            },{
+                title : '操作',
+                field : 'id',
+                align : 'center',
+                valign : 'middle',
+                sortable : true,
+                formatter :operationFormatter
             }],
             onLoadSuccess: function(){  //加载成功时执行
                 //layer.msg("加载成功");
@@ -146,7 +160,7 @@
                 //询问框
                 $.fn.modalConfirm ('确定要删除所选数据？', function () {
                     $.ajax({
-                        url:'${ctx}/sys/workf/delete',
+                        url:'${ctx}/sys/workf/batchDelete',
                         type: "Post",
                         data:{ids:selections},
                         dataType : "json",
@@ -179,6 +193,36 @@
     function getIdSelections() {
         return $.map($table.bootstrapTable('getSelections'), function (row) {
             return row.id
+        });
+    }
+
+    function operationFormatter(value, row, index) {
+        var str = "";
+        if (value != "" && value != null){
+            if (deleteCount){//删除
+                str += '<a class="btn btn-icon-only"  onclick="deleteW(&quot;'+value+'&quot;)" href="javascript:void(0)" title="删除"> <i class="glyphicon glyphicon-remove"></i></a>';
+            }
+        }
+        return str;
+    }
+
+    function deleteW(value) {
+        //询问框
+        $.fn.modalConfirm ('确定要删除所选数据？', function () {
+            $.ajax({
+                url:'${ctx}/sys/workf/delete',
+                type: "Post",
+                data:{id:value},
+                dataType : "json",
+                success:function(result){
+                    if(result > 0){
+                        $.fn.modalMsg("操作成功","success");
+                    }else {
+                        $.fn.modalMsg("操作失败","error");
+                    }
+                    $table.bootstrapTable('refresh');	//从新加载数据
+                }
+            });
         });
     }
 

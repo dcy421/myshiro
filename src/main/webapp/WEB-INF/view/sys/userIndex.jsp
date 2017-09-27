@@ -69,14 +69,9 @@
                             <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>新增
                         </button>
                     </shiro:hasPermission>
-                    <shiro:hasPermission name="sys:user:update">
-                        <button id="btn_edit" type="button" class="btn btn-default" disabled>
-                            <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>修改
-                        </button>
-                    </shiro:hasPermission>
                     <shiro:hasPermission name="sys:user:delete">
                         <button id="btn_delete" type="button" class="btn btn-default" disabled>
-                            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>删除
+                            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>批量删除
                         </button>
                     </shiro:hasPermission>
                     <shiro:hasPermission name="sys:user:export">
@@ -108,15 +103,20 @@
     var $table = $('#empUserList'),
         $query = $('#btn_query'),
         $remove = $('#btn_delete'),
-        $edit = $('#btn_edit'),
         $add = $('#btn_add'),
         $export = $('#btn_export'),
-        selections = [];
+        selections = [],
+        permissionButton=[
+            '<shiro:hasPermission name="sys:user:update"><a class="btn btn-icon-only"  data-type="edit" href="javascript:void(0)" title="修改">',
+            '<i class="glyphicon glyphicon-edit"></i></a></shiro:hasPermission>',
+            '<shiro:hasPermission name="sys:user:delete"><a class="btn btn-icon-only" data-type="delete" href="javascript:void(0)" title="删除">',
+            '<i class="glyphicon glyphicon-remove"></i></a></shiro:hasPermission>'
+        ].join('');//权限按钮
     $(function() {
         $table.bootstrapTable({
             url : '${ctx}/sys/user/getUserPageList',
             /*detailView:true,
-             detailFormatter:detailFormatter,*/
+            detailFormatter:detailFormatter,*/
             queryParams : queryParams,
             buttonsAlign:"right",  //按钮位置
             toolbar : "#toolbar",// 指定工具栏
@@ -174,7 +174,15 @@
                 valign : 'middle',
                 sortable : true,
                 formatter :lockedFormatter
-            } ],
+            } ,{
+                title : '操作',
+                field : 'id',
+                align : 'center',
+                valign : 'middle',
+                sortable : true,
+                formatter :actionFormatter,
+                events:actionEvents
+            }],
             onLoadSuccess: function(){  //加载成功时执行
                 //layer.msg("加载成功");
                 //$('#empUserList').bootstrapTable("refresh");
@@ -192,7 +200,6 @@
             $table.bootstrapTable('resetView', {
                 height:getHeight()
             });
-            /*$table.bootstrapTable('resetView');*/
         }, 300);
         $(window).resize(function () {
             $table.bootstrapTable('resetView', {
@@ -203,7 +210,6 @@
         $table.on('check.bs.table uncheck.bs.table ' +
             'check-all.bs.table uncheck-all.bs.table', function () {
             $remove.prop('disabled', !$table.bootstrapTable('getSelections').length);
-            $edit.prop('disabled', !$table.bootstrapTable('getSelections').length);
             // save your data, here just save the current page
             selections = getIdSelections();
         });
@@ -212,22 +218,8 @@
         });
         $add.click(function () {
             layer_show("用户添加","${ctx}/sys/user/add","800","600");
-            //addTabs(({ id: '10008111', title: '用户添加', close: false, url: '/user/userAdd' }));
-            /*console.log($('.page-tabs-content', parent.document).hide()) ;
-             console.log($('.page-tabs-content').hide()) ;*/
-            /*
-             //是否找到父级的iframe
-             console.log($('.page-tabs-content', parent.document).length>0) ;
-             console.log($('.page-tabs-content').length>0) ;*/
-        });
-        $edit.click(function () {
-            if (selections.length != 1) {
-                $.fn.modalAlert('请选择一条数据进行编辑！','error');
-                return false;
-            } else {
-                layer_show("用户修改","${ctx}/sys/user/update?id="+selections[0],"800","600");
-
-            }
+            //新增加一个iframe
+            //parent.addTabs({ id: '10008111', title: '用户添加', close: true, url: '${ctx}/sys/user/add' });
         });
         $remove.click(function () {
             if (selections.length < 1) {
@@ -236,7 +228,7 @@
                 //询问框
                 $.fn.modalConfirm ('确定要删除所选数据？', function () {
                     $.ajax({
-                        url:'${ctx}/sys/user/delete',
+                        url:'${ctx}/sys/user/batchDelete',
                         type: "Post",
                         data:{ids:selections},
                         dataType : "json",
@@ -246,6 +238,7 @@
                             }else {
                                 $.fn.modalMsg("操作失败","error");
                             }
+                            $remove.prop('disabled', true);
                             $table.bootstrapTable('refresh');	//从新加载数据
                         }
                     });
@@ -293,6 +286,35 @@
         });
         return html.join('');
     }
+
+    function actionFormatter(value, row, index) {
+        return permissionButton;
+    }
+
+    window.actionEvents = {
+        'click [data-type="edit"]': function (e, value, row) {
+            layer_show("用户修改","${ctx}/sys/user/update?id="+value,"800","600");
+        },
+        'click [data-type="delete"]': function (e, value, row) {
+            $.fn.modalConfirm ('确定要删除所选数据？', function () {
+                $.ajax({
+                    url:'${ctx}/sys/user/delete',
+                    type: "Post",
+                    data:{id:value},
+                    dataType : "json",
+                    success:function(result){
+                        if(result > 0){
+                            $.fn.modalMsg("操作成功","success");
+                        }else {
+                            $.fn.modalMsg("操作失败","error");
+                        }
+                        $table.bootstrapTable('refresh');	//从新加载数据
+                    }
+                });
+            });
+        }
+    };
+
 
     function sexFormatter(value, row, index) {
         var str = "";

@@ -21,6 +21,7 @@ import org.activiti.engine.repository.Deployment;
 import org.activiti.engine.repository.Model;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +47,8 @@ public class ModelController {
     @Autowired
     private RepositoryService repositoryService;
 
-    @RequestMapping(method = RequestMethod.GET,value = "/list")
+    @RequiresPermissions("sys:model:search")
+    @RequestMapping(method = RequestMethod.GET,value = "/list",name = "流程模型列表")
     public String modelIndex(HttpServletRequest request) {
         return "/workflow/model-list";
     }
@@ -54,8 +56,9 @@ public class ModelController {
     /**
      * 模型列表
      */
+    @RequiresPermissions("sys:model:search")
     @ResponseBody
-    @RequestMapping(method = RequestMethod.POST,value = "/getModelList")
+    @RequestMapping(method = RequestMethod.POST,value = "/getModelList",name = "流程模型数据")
     public Map modelList() {
         Map map = new HashMap();
         try {
@@ -66,7 +69,8 @@ public class ModelController {
         return map;
     }
 
-    @RequestMapping(method = RequestMethod.GET,value = "/add")
+    @RequiresPermissions("sys:model:add")
+    @RequestMapping(method = RequestMethod.GET,value = "/add",name = "流程添加页面")
     public String add(HttpServletRequest request) {
         return "/workflow/templateAdd";
     }
@@ -74,7 +78,8 @@ public class ModelController {
     /**
      * 创建模型
      */
-    @RequestMapping(value = "create")
+    @RequiresPermissions("sys:model:add")
+    @RequestMapping(method = RequestMethod.GET,value = "create",name = "创建模型")
     public void create(@RequestParam("name") String name, @RequestParam("key") String key, @RequestParam("description") String description,
                        HttpServletRequest request, HttpServletResponse response) {
         try {
@@ -108,8 +113,9 @@ public class ModelController {
     /**
      * 根据Model部署流程
      */
+    @RequiresPermissions("sys:model:deploy")
     @ResponseBody
-    @RequestMapping(method = RequestMethod.POST,value = "/deploy")
+    @RequestMapping(method = RequestMethod.POST,value = "/deploy",name = "部署流程")
     public Map deploy(String modelId, RedirectAttributes redirectAttributes) {
         Map map = new HashMap();
         try {
@@ -138,7 +144,8 @@ public class ModelController {
      * @param modelId 模型ID
      * @param type    导出文件类型(bpmn\json)
      */
-    @RequestMapping(value = "export/{modelId}/{type}")
+    @RequiresPermissions("sys:model:export")
+    @RequestMapping(method = RequestMethod.GET,value = "export/{modelId}/{type}",name = "导出文件")
     public void export(@PathVariable("modelId") String modelId,
                        @PathVariable("type") String type,
                        HttpServletResponse response) {
@@ -187,11 +194,12 @@ public class ModelController {
     }
 
     /**
-     * 删除
+     * 批量删除
      * @param ids
      */
+    @RequiresPermissions("sys:model:delete")
     @ResponseBody
-    @RequestMapping(method = RequestMethod.POST,value = "/delete")
+    @RequestMapping(method = RequestMethod.POST,value = "/batchDelete",name = "删除模型")
     public int delete(@RequestParam(value = "ids[]")  String[]  ids) {
         for (int i=0;i<ids.length;i++){
             repositoryService.deleteModel(ids[i]);
@@ -199,4 +207,16 @@ public class ModelController {
         return 1;
     }
 
+    /**
+     * 删除
+     * @param id
+     * @return
+     */
+    @RequiresPermissions("sys:model:delete")
+    @ResponseBody
+    @RequestMapping(method = RequestMethod.POST,value = "/delete",name = "删除模型")
+    public int delete(@RequestParam(value = "id")  String  id) {
+        repositoryService.deleteModel(id);
+        return 1;
+    }
 }

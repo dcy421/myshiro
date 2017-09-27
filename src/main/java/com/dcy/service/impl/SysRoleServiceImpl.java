@@ -72,6 +72,12 @@ public class SysRoleServiceImpl extends BaseService implements SysRoleService {
         return sysRoleMapper.deleteByids(ids);
     }
 
+    public int deleyeById(Integer id) {
+        //清空所有的缓存
+        userRealm.clearAllCache();
+        return sysRoleMapper.deleteByPrimaryKey(id);
+    }
+
     public List<String> selectRoleMenu(Integer roleId) {
         return sysRoleMapper.selectRoleMenu(roleId);
     }
