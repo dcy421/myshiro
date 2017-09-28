@@ -84,7 +84,12 @@ public class UserController extends BaseController {
 	public Map getUserList(BootStrapTable bootStrapTable, SysUser sysUser){
 		Map map = new HashMap();
 		try {
-			map = new Common().getBSTData(sysUserService.getUserCount(sysUser), sysUserService.getUserPageList(bootStrapTable,sysUser));
+			Integer count = sysUserService.getUserCount(sysUser);
+			if (count > 0){
+				map = new Common().getBSTData(count, sysUserService.getUserPageList(bootStrapTable,sysUser));
+			}else {
+				map = new Common().getBSTData(count, new ArrayList());
+			}
 		}catch (Exception ex){
 			logger.error("getUserList-=-"+ex.toString());
 		}

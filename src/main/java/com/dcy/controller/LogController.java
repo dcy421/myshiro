@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -57,7 +58,13 @@ public class LogController extends BaseController {
     public Map getLogList(BootStrapTable bootStrapTable, SysLog sysLog){
         Map map = new HashMap();
         try {
-            map = new Common().getBSTData(sysLogService.getLogCount(sysLog),sysLogService.getLogPageList(bootStrapTable, sysLog));
+            Integer count = sysLogService.getLogCount(sysLog);
+            if (count > 0){
+                map = new Common().getBSTData(count,sysLogService.getLogPageList(bootStrapTable, sysLog));
+            }else {
+                map = new Common().getBSTData(count,new ArrayList());
+            }
+
         }catch (Exception ex){
             logger.error("getUserList-=-"+ex.toString());
         }

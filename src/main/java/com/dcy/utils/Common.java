@@ -19,7 +19,7 @@ public class Common {
      * @param list
      * @return
      */
-    public static Map getBSTData(int count, List list){
+    public Map getBSTData(int count, List list){
         Map map = new HashMap();
         try {
             map.put("total",count);

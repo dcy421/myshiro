@@ -1,6 +1,7 @@
 package com.dcy.controller;
 
 import java.io.ByteArrayInputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -62,7 +63,12 @@ public class ModelController {
     public Map modelList() {
         Map map = new HashMap();
         try {
-            map = new Common().getBSTData((int) repositoryService.createModelQuery().count(), repositoryService.createModelQuery().list());
+            Integer count = (int) repositoryService.createModelQuery().count();
+            if (count > 0){
+                map = new Common().getBSTData(count, repositoryService.createModelQuery().list());
+            }else {
+                map = new Common().getBSTData(count, new ArrayList());
+            }
         }catch (Exception ex){
             logger.error("modelList-=-"+ex.toString());
         }

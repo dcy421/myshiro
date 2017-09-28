@@ -73,7 +73,13 @@ public class RoleController {
     public Map getRolePageList(BootStrapTable bootStrapTable, SysRole sysRole){
         Map map = new HashMap();
         try{
-            map = new Common().getBSTData(sysRoleService.getRoleCount(sysRole), sysRoleService.getRolePageList(bootStrapTable,sysRole));
+            Integer count = sysRoleService.getRoleCount(sysRole);
+            if (count > 0){
+                map = new Common().getBSTData(count, sysRoleService.getRolePageList(bootStrapTable,sysRole));
+            }else {
+                map = new Common().getBSTData(count, new ArrayList());
+            }
+
         }catch (Exception ex){
             logger.error("getRolePageList-=-"+ex.toString());
         }
