@@ -13,7 +13,7 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
     <!-- spring版本号 -->
-    <spring.version>6.0.23</spring.version>
+    <spring.version>6.1.14</spring.version>
 
     <!-- mybatis版本号 -->
     <mybatis.version>3.5.6</mybatis.version>
@@ -204,7 +204,7 @@
     <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
-      <version>2.7</version>
+      <version>2.14.0</version>
     </dependency>
 
     <dependency>
